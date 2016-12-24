@@ -1,0 +1,5 @@
+Process = execution of an application (heavy). Processes don't share the same address space
+Thread = path of execution (within a process). Threads share the same address space --> carefulwith concurrency and memory blocks.
+Usually, 1 process is started with one thread.
+Dispatcher ==> allow one process to acces the CPU.
+Processes execute concurrently (share the hardware ressource CPU)
