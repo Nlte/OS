@@ -1,2 +1,9 @@
 # OS
-Advanced Operating System course - Implementation of a tiny os.
+Implementation of a small operating system design for ARM CPU.
+
+## Components implemented
+- System calls
+- Process dispatching
+- Scheduling
+
+
