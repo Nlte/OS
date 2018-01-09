@@ -121,7 +121,7 @@ static void start_current_process() {
   sys_exit(0);
 }
 
-void create_process(func_t* entry) {
+pcb_s* create_process(func_t* entry) {
 
   // Init the pcb of the new process
   pcb_s* pcb = (pcb_s*) kAlloc(sizeof(pcb_s));
@@ -142,7 +142,7 @@ void create_process(func_t* entry) {
   pcb->next = &kmain_process;
 
   n_process++;
-
+  return pcb;
 }
 
 void load_context_from_pcb(uint32_t* sp) {

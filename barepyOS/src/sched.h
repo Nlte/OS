@@ -42,7 +42,7 @@ void do_sys_yieldto(uint32_t* context);
 void sys_yield();
 void do_sys_yield();
 // Create pcb based on Function
-void create_process(func_t* entry);
+pcb_s* create_process(func_t* entry);
 // Elect new process
 void elect();
 // helper functions to load a save context
