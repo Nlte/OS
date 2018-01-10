@@ -81,7 +81,7 @@ void __attribute__((naked)) swi_handler() {
   // Push r0-r12 + lr to the stack
   SAVE_CONTEXT();
 
-  // Get stack pointer avec pushing Registers to the stack
+  // get the address of the saved registers on the stack
   uint32_t* context;
   __asm("mov %0, sp" : "=r"(context));
 
