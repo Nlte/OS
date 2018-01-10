@@ -13,6 +13,8 @@ b *after_kmain
 b kernel_panic
 
 b *kmain
+b *user_process1
+b *user_process2
 
 source utils.gdb
 

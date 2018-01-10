@@ -7,7 +7,7 @@
 // Syscall : reboot ____________________________________________________________
 void sys_reboot() {
   // put id in r0 (#1)
-  SWI(ID_REBOOT);
+  SWI(SID_REBOOT);
 }
 
 void do_sys_reboot() {
@@ -18,7 +18,7 @@ void do_sys_reboot() {
 
 // Syscall : nop _______________________________________________________________
 void sys_nop() {
-  SWI(ID_NOP);
+  SWI(SID_NOP);
 }
 
 void do_sys_nop() {
@@ -35,7 +35,7 @@ void sys_settime(uint64_t date_ms) {
   __asm("mov r1, %0" : : "r"(msb) : "r2", "r1", "r0");
   __asm("mov r2, %0" : : "r"(lsb) : "r2", "r1", "r0");
   // swi call with id 3
-  SWI(ID_SETTIME);
+  SWI(SID_SETTIME);
 }
 
 void do_sys_settime(uint32_t* context) {
@@ -52,7 +52,7 @@ void do_sys_settime(uint32_t* context) {
 // Syscall : get time __________________________________________________________
 uint64_t sys_gettime() {
   // Call the get time routine directly
-  SWI(ID_GETTIME);
+  SWI(SID_GETTIME);
   // Retrieve time from r0, r1
   uint32_t lsb;
   uint32_t msb;
@@ -75,30 +75,6 @@ void do_sys_gettime(uint32_t* context) {
   return;
 }
 
-// Syscall : exit_____________________________________________________________
-void sys_exit(int status) {
-  __asm("mov r1, %0" : : "r"(status));
-  SWI(ID_EXIT);
-}
-
-void do_sys_exit(uint32_t* sp) {
-  current_process->state = TERMINATED;
-  current_process->exit_status = *(sp+1);
-  // Elect a new process
-  elect();
-
-  for(int i=0; i< N_REGISTERS; ++i){
-    sp[i] = current_process->r[i];
-  }
-  sp[N_REGISTERS] = current_process->lr_svc;
-
-  SWITCH_TO_SYSTEM_MODE();
-  __asm("mov lr, %0" : : "r"(current_process->lr_user));
-  __asm("mov sp, %0" : : "r"(current_process->sp_user));
-  SWITCH_TO_SVC_MODE();
-  __asm("msr spsr, %0" : : "r"(current_process->cpsr_user));
-}
-
 // SWI handler _________________________________________________________________
 void __attribute__((naked)) swi_handler() {
 
@@ -106,20 +82,18 @@ void __attribute__((naked)) swi_handler() {
   SAVE_CONTEXT();
 
   // Get stack pointer avec pushing Registers to the stack
-  uint32_t* sp;
-  __asm("mov %0, sp" : "=r"(sp));
+  uint32_t* context;
+  __asm("mov %0, sp" : "=r"(context));
 
   int syscall_id;
   __asm("mov %0, r0" : "=r"(syscall_id));
 
   switch (syscall_id) {
-    case ID_REBOOT: do_sys_reboot(); break;
-    case ID_NOP: do_sys_nop(); break;
-    case ID_SETTIME: do_sys_settime(sp); break;
-    case ID_GETTIME: do_sys_gettime(sp); break;
-    case ID_YIELDTO: do_sys_yieldto(sp); break;
-    case ID_YIELD: do_sys_yield(sp); break;
-    case ID_EXIT: do_sys_exit(sp); break;
+    case SID_REBOOT: do_sys_reboot(); break;
+    case SID_NOP: do_sys_nop(); break;
+    case SID_SETTIME: do_sys_settime(context); break;
+    case SID_GETTIME: do_sys_gettime(context); break;
+    case SID_YIELDTO: do_sys_yieldto(context); break;
     default: PANIC(); break;
   }
 
