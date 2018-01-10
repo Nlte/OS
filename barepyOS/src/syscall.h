@@ -13,6 +13,7 @@ typedef enum {
   SID_SETTIME = 0x03,
   SID_GETTIME = 0x04,
   SID_YIELDTO = 0x05,
+  SID_YIELD = 0x06
 } SYSCALL_ID;
 
 // Reboot qemu

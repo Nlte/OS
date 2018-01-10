@@ -18,6 +18,9 @@ struct pcb_s {
   uint32_t* memory_begin;
   uint32_t* sp;
   uint32_t cpsr;
+
+  struct pcb_s* next;
+  struct pcb_s* prev;
 };
 typedef struct pcb_s pcb_s;
 
@@ -31,5 +34,8 @@ void sys_yieldto(pcb_s* dest);
 void do_sys_yieldto(uint32_t* context);
 // Create new process
 pcb_s* create_process(func_t* entry);
+// Yield to next process
+void sys_yield();
+void do_sys_yield(uint32_t* context);
 
 #endif

@@ -15,7 +15,10 @@ void sched_init(){
   // Init heap
   kheap_init();
   current_process = &kmain_process;
+  current_process->next = current_process;
+  current_process->prev = current_process;
 }
+
 
 // Syscall : yield to __________________________________________________________
 void sys_yieldto(pcb_s* dest) {
@@ -54,6 +57,46 @@ void do_sys_yieldto(uint32_t* context) {
   __asm("msr spsr, %0" : : "r"(current_process->cpsr));
 }
 
+// Pick next process ___________________________________________________________
+void elect()
+{
+  current_process = current_process->next;
+}
+
+// Yield to the next process ___________________________________________________
+void sys_yield()
+{
+  SWI(SID_YIELD);
+}
+
+void do_sys_yield(uint32_t* context)
+{
+  // save context in current pcb
+  __asm("mrs %0, spsr" : "=r"(current_process->cpsr));
+  SWITCH_TO_SYSTEM_MODE();
+  __asm("mov %0, lr" : "=r"(current_process->lr_user));
+  __asm("mov %0, sp" : "=r"(current_process->sp));
+  SWITCH_TO_SVC_MODE();
+  for (int i = 0; i < N_REGISTERS; i++) {
+    current_process->r[i] = context[N_REGISTERS];
+  }
+  current_process->lr_svc = context[N_REGISTERS];
+
+  // Elect next process
+  elect();
+
+  // Update context for the next process
+  context[N_REGISTERS] = current_process->lr_svc;
+  for (int i = 0; i < N_REGISTERS; i++) {
+    context[i] = current_process->r[i];
+  }
+  SWITCH_TO_SYSTEM_MODE();
+  __asm("mov lr, %0" : : "r"(current_process->lr_user));
+  __asm("mov sp, %0" : : "r"(current_process->sp));
+  SWITCH_TO_SVC_MODE();
+  __asm("msr spsr, %0" : : "r"(current_process->cpsr));
+}
+
 
 pcb_s* create_process(func_t* entry)
 {
@@ -65,6 +108,11 @@ pcb_s* create_process(func_t* entry)
   pcb->lr_user = (uint32_t) entry;
   pcb->lr_svc = (uint32_t) entry;
   pcb->cpsr = 0x150;
+
+  pcb->prev = current_process;
+  pcb->next = &kmain_process;
+  current_process->next = pcb;
+
   return pcb;
 }
 
