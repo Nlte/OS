@@ -94,7 +94,7 @@ void __attribute__((naked)) swi_handler() {
     case SID_SETTIME: do_sys_settime(context); break;
     case SID_GETTIME: do_sys_gettime(context); break;
     case SID_YIELDTO: do_sys_yieldto(context); break;
-    case SID_YIELD: do_sys_yield(context);
+    case SID_YIELD: do_sys_yield(context); break;
     default: PANIC(); break;
   }
 

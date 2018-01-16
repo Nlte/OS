@@ -37,5 +37,7 @@ pcb_s* create_process(func_t* entry);
 // Yield to next process
 void sys_yield();
 void do_sys_yield(uint32_t* context);
+void context_to_pcb(uint32_t* context);
+void pcb_to_context(uint32_t* context);
 
 #endif

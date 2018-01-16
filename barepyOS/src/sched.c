@@ -71,6 +71,15 @@ void sys_yield()
 
 void do_sys_yield(uint32_t* context)
 {
+  context_to_pcb(context);
+  // Elect next process
+  elect();
+
+  pcb_to_context(context);
+}
+
+void context_to_pcb(uint32_t* context)
+{
   // save context in current pcb
   __asm("mrs %0, spsr" : "=r"(current_process->cpsr));
   SWITCH_TO_SYSTEM_MODE();
@@ -81,15 +90,15 @@ void do_sys_yield(uint32_t* context)
     current_process->r[i] = context[N_REGISTERS];
   }
   current_process->lr_svc = context[N_REGISTERS];
+}
 
-  // Elect next process
-  elect();
-
+void pcb_to_context(uint32_t* context)
+{
   // Update context for the next process
-  context[N_REGISTERS] = current_process->lr_svc;
   for (int i = 0; i < N_REGISTERS; i++) {
     context[i] = current_process->r[i];
   }
+  context[N_REGISTERS] = current_process->lr_svc;
   SWITCH_TO_SYSTEM_MODE();
   __asm("mov lr, %0" : : "r"(current_process->lr_user));
   __asm("mov sp, %0" : : "r"(current_process->sp));
@@ -109,9 +118,14 @@ pcb_s* create_process(func_t* entry)
   pcb->lr_svc = (uint32_t) entry;
   pcb->cpsr = 0x150;
 
-  pcb->prev = current_process;
+  // put pcb at the end of the linked list
+  pcb_s* last = current_process;
+  while (last->next != &kmain_process) {
+    last = last->next;
+  }
   pcb->next = &kmain_process;
-  current_process->next = pcb;
+  pcb->prev = last;
+  last->next = pcb;
 
   return pcb;
 }
