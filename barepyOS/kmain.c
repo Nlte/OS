@@ -2,14 +2,15 @@
 #include "syscall.h"
 #include "sched.h"
 
-#define NB_PROCESS 5
+#define NB_PROCESS 3
 
 void user_process() {
   int v = 0;
-  for(;;) {
+  while(v < 5) {
     v++;
     sys_yield();
   }
+  sys_exit(0);
 }
 
 void kmain() {

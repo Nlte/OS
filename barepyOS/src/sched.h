@@ -7,8 +7,17 @@
 #define N_REGISTERS 13
 #define SIZE_STACK_PROCESS 10240 // 10 Ko
 
+int nprocess;
+
 // Function pointer
 typedef int (func_t)(void);
+
+// Process state
+typedef enum {
+  PS_RUNNING = 0x01,
+  PS_STANDBY = 0x02,
+  PS_TERMINATED = 0x03
+} PROCESS_STATE;
 
 // Process control block
 struct pcb_s {
@@ -18,6 +27,12 @@ struct pcb_s {
   uint32_t* memory_begin;
   uint32_t* sp;
   uint32_t cpsr;
+
+  func_t* entry;
+
+  int pid;
+  int exit_status;
+  uint8_t state;
 
   struct pcb_s* next;
   struct pcb_s* prev;
@@ -39,5 +54,9 @@ void sys_yield();
 void do_sys_yield(uint32_t* context);
 void context_to_pcb(uint32_t* context);
 void pcb_to_context(uint32_t* context);
+// Terminate process
+int sys_exit(int status);
+void do_sys_exit(uint32_t* context);
+void free_pcb(pcb_s* pcb);
 
 #endif

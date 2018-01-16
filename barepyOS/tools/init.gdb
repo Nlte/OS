@@ -12,9 +12,7 @@ b *after_kmain
 b kernel_panic
 
 b *kmain
-b kmain.c:25
-b *user_process
-b *do_sys_yield
+b *sys_exit
 
 source utils.gdb
 
