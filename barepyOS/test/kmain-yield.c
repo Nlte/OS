@@ -1,5 +1,6 @@
 #include "syscall.h"
 #include "sched.h"
+#include "kernel.h"
 
 #define NB_PROCESS 5
 
@@ -15,7 +16,7 @@ void user_process()
 
 void kmain( void )
 {
-    sched_init();
+    kernel_init();
 
     int i;
     for(i=0;i<NB_PROCESS;i++)

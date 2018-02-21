@@ -1,6 +1,11 @@
+#include "config.h"
 #include "util.h"
 #include "syscall.h"
 #include "sched.h"
+#include "hw.h"
+#include "asm_tools.h"
+#include "kernel.h"
+#include <stdio.h>
 
 #define NB_PROCESS 3
 
@@ -14,7 +19,10 @@ void user_process() {
 }
 
 void kmain() {
-  sched_init();
+
+  kernel_init();
+
+  sys_exit(0);
 
   int i;
   for (i = 0; i < NB_PROCESS; i++) {

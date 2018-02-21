@@ -1,6 +1,7 @@
 #include "util.h"
 #include "syscall.h"
 #include "sched.h"
+#include "kernel.h"
 
 struct pcb_s *p1, *p2;
 
@@ -26,7 +27,7 @@ void user_process_2()
 
 void kmain( void )
 {
-    sched_init();
+    kernel_init();
 
     p1=create_process((func_t*)&user_process_1);
     p2=create_process((func_t*)&user_process_2);

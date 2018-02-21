@@ -12,7 +12,6 @@ b *after_kmain
 b kernel_panic
 
 b *kmain
-b *sys_exit
 
 source utils.gdb
 

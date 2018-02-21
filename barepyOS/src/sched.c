@@ -13,8 +13,9 @@ pcb_s kmain_process;
 // Initialize scheduler
 void sched_init(){
   nprocess = 0;
-  // Init heap
-  kheap_init();
+
+  // int cpu timer
+  timer_init();
   current_process = &kmain_process;
   current_process->next = current_process;
   current_process->prev = current_process;
@@ -166,11 +167,15 @@ pcb_s* create_process(func_t* entry)
   pcb->next = &kmain_process;
   pcb->prev = last;
   last->next = pcb;
-
+  log_str("Process created with entry:");
+  log_int((int)entry);
+  log_cr();
   return pcb;
 }
 
 
-void __attribute__((naked)) irq_handler() {
-
+void __attribute__ ((naked)) irq_handler() {
+  // reset timer
+  set_next_tick_default();
+  ENABLE_TIMER_IRQ();
 }
