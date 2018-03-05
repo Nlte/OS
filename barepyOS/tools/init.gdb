@@ -8,10 +8,7 @@ target remote:1234
 set history filename ~/.gdb_history
 set history save
 
-b *after_kmain
-b kernel_panic
-
-b *kmain
+b *kernel_main
 
 source utils.gdb
 

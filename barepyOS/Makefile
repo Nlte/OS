@@ -8,20 +8,20 @@ all: kernel_for_qemu kernel_for_sdcard
 
 kernel_for_qemu: build/kernel.elf build/kernel.list
 
-kernel_for_sdcard: kernel_for_qemu build/kernel.img 
+kernel_for_sdcard: kernel_for_qemu build/kernel.img
 
 remake: clean all
 
 # options à passer au compilateur C
-CFLAGS=-Wall -Werror -nostdlib -nostartfiles -ffreestanding -std=c99 -g -fomit-frame-pointer -nostartfiles -O0 -fdiagnostics-show-option
+CFLAGS=-Wall -Werror -nostdlib -nostartfiles -ffreestanding -std=gnu99 -g -fomit-frame-pointer -nostartfiles -O2 -fdiagnostics-show-option -fpic
 
 # options à passer à la fois au compilateur C et à l'assembleur
-COMMON_FLAGS=-mcpu=arm1176jzf-s
+COMMON_FLAGS=-mcpu=cortex-a7
 
 # Object files (excluding kmain)
 OBJECTS=$(addsuffix .o,  $(addprefix build/, $(basename $(notdir $(wildcard src/*.[cs])))))
 
-# non-default usage: "make KMAIN=test/my-kmain.c" 
+# non-default usage: "make KMAIN=test/my-kmain.c"
 KMAIN ?= ./kmain.c
 
 # check whether kmain does exists. typically this would get triggered
@@ -32,7 +32,7 @@ endif
 
 # check whether we're dealing with a different kmain.c than last time:
 # either updated/modified, or maybe another file, located somewhere else
-ifneq "$(shell md5sum ${KMAIN})" "$(shell test -f build/kmain.md5 && cat build/kmain.md5)"
+ifneq "$(shell md5 ${KMAIN})" "$(shell test -f build/kmain.md5 && cat build/kmain.md5)"
   # if so, then our kmain.o has to be recompiled
   .PHONY: build/kmain.o
 endif
@@ -44,11 +44,11 @@ build:
 build/%.o: src/%.c $(wildcard src/*.h) | build
 	arm-none-eabi-gcc $(COMMON_FLAGS) $(CFLAGS) $< -c -o $@
 
-# compilation du point d'entrée 
+# compilation du point d'entrée
 build/kmain.o: $(KMAIN) $(wildcard src/*.h)
 	arm-none-eabi-gcc $(COMMON_FLAGS) $(CFLAGS) -I src $< -c -o $@
 	@#"let's silently remember the checksum of the most recent kmain.c we compiled"
-	@md5sum $(KMAIN) > build/kmain.md5
+	@md5 $(KMAIN) > build/kmain.md5
 
 # assemblage .s vers ELF
 build/%.o: src/%.s | build

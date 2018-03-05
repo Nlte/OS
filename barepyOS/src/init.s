@@ -1,86 +1,51 @@
-;; @ Build the interrupt vector table here at address 0x8000
-;; @ (because we are using Linux boot mechanism)
+// To keep this in the first portion of the binary.
+.section ".text.boot"
+
+// Make _start global.
 .globl _start
+
+// Entry point for the kernel.
+// r15 -> should begin execution at 0x8000.
+// r0 -> 0x00000000
+// r1 -> 0x00000C42
+// r2 -> 0x00000100 - start of ATAGS
+// preserve these registers as argument for kernel_main
 _start:
-    ldr pc,reset_vector
-    ldr pc,undefined_vector
-    ldr pc,swi_vector
-    ldr pc,prefetch_vector
-    ldr pc,data_vector
-    ldr pc,unused_vector
-    ldr pc,irq_vector
-    ldr pc,fiq_vector
-reset_vector:      .word reset_asm_handler
-undefined_vector:  .word undefined_asm_handler
-swi_vector:        .word swi_handler
-prefetch_vector:   .word prefetch_asm_handler
-data_vector:       .word data_asm_handler
-unused_vector:     .word unused_asm_handler
-irq_vector:        .word irq_handler
-fiq_vector:        .word fiq_asm_handler
 
+  mrc p15, 0, r5, c0, c0, 5
+  ands r5, r5, #0x3
+  cmp r5, #0
+  beq .exit_park // core0 exit park
+  mov sp, #0x8000
+  b halt  // other cores halt
 
-reset_asm_handler:
+.exit_park:
 
-;;@ Copy IVT at address 0 as it should be
-    mov r0,#0x8000
-    mov r1,#0x0000
-    ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
-    stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
-    ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
-    stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
+  mov sp, #0x8000
 
-    ;@ FIQ
-    ;@ (PSR_FIQ_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
-    mov r0,#0xD1
-    msr cpsr_c,r0
-    ldr sp, =__irq_stack_end__
+	// Clear out bss.
+	ldr r4, =__bss_start
+	ldr r9, =__bss_end
+	mov r5, #0
+	mov r6, #0
+	mov r7, #0
+	mov r8, #0
+	b       2f
 
-    ;@ IRQ
-    ;@ (PSR_IRQ_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
-    mov r0,#0xD2
-    msr cpsr_c,r0
-    ldr sp, =__irq_stack_end__
+1:
+	// store multiple at r4.
+	stmia r4!, {r5-r8}
 
-   ;@ (PSR_ABORT_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
-    mov r0,#0xD7
-    msr cpsr_c,r0
-    ldr sp, =__irq_stack_end__
+	// If we are still below bss_end, loop.
+2:
+	cmp r4, r9
+	blo 1b
 
-    ;@ (PSR_SVC_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
-    mov r0,#0xD3
-    msr cpsr_c,r0
-    ldr sp, =__svc_stack_end__
+	// Call kernel_main
+	ldr r3, =kernel_main
+	blx r3
 
-    ;@ (PSR_SYSTEM_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
-    mov r0,#0xDF
-    msr cpsr_c,r0
-    ldr sp, =__sys_stack_end__
-
-    bl kmain
-
-after_kmain:
-    b after_kmain
-
-;;@ Trampolines to Interrupt Service Routines
-
-undefined_asm_handler:
-	b undefined_asm_handler
-
-swi_asm_handler:
-	b swi_asm_handler
-
-prefetch_asm_handler:
-	b irq_asm_handler
-
-irq_asm_handler:
-	b irq_asm_handler
-
-unused_asm_handler:
-	b unused_asm_handler
-
-fiq_asm_handler:
-	b fiq_asm_handler
-
-data_asm_handler:
-	b data_asm_handler
+	// halt
+halt:
+	wfe
+	b halt
