@@ -4,109 +4,248 @@ build/kernel.elf:     file format elf32-littlearm
 
 Disassembly of section .text:
 
-00008000 <__start>:
-    8000:	ee105fb0 	mrc	15, 0, r5, cr0, cr0, {5}
-    8004:	e2155003 	ands	r5, r5, #3
-    8008:	e3550000 	cmp	r5, #0
-    800c:	0a000001 	beq	8018 <.exit_park>
-    8010:	e3a0d902 	mov	sp, #32768	; 0x8000
-    8014:	ea00000c 	b	804c <halt>
+00008000 <CORE0_READY>:
+    8000:	00000000 	.word	0x00000000
 
-00008018 <.exit_park>:
-    8018:	e3a0d902 	mov	sp, #32768	; 0x8000
-    801c:	e59f4030 	ldr	r4, [pc, #48]	; 8054 <halt+0x8>
-    8020:	e59f9030 	ldr	r9, [pc, #48]	; 8058 <halt+0xc>
-    8024:	e3a05000 	mov	r5, #0
-    8028:	e3a06000 	mov	r6, #0
-    802c:	e3a07000 	mov	r7, #0
-    8030:	e3a08000 	mov	r8, #0
-    8034:	ea000000 	b	803c <.exit_park+0x24>
-    8038:	e8a401e0 	stmia	r4!, {r5, r6, r7, r8}
-    803c:	e1540009 	cmp	r4, r9
-    8040:	3afffffc 	bcc	8038 <.exit_park+0x20>
-    8044:	e59f3010 	ldr	r3, [pc, #16]	; 805c <halt+0x10>
-    8048:	e12fff33 	blx	r3
+00008004 <CORE1_READY>:
+    8004:	00000000 	.word	0x00000000
 
-0000804c <halt>:
-    804c:	e320f002 	wfe
-    8050:	eafffffd 	b	804c <halt>
-    8054:	0000a000 	.word	0x0000a000
-    8058:	0000a000 	.word	0x0000a000
-    805c:	00008138 	.word	0x00008138
+00008008 <CORE2_READY>:
+    8008:	00000000 	.word	0x00000000
 
-00008060 <uart_init>:
-    8060:	e3a01000 	mov	r1, #0
-    8064:	e3a03a01 	mov	r3, #4096	; 0x1000
-    8068:	e3433f20 	movt	r3, #16160	; 0x3f20
-    806c:	e1a00001 	mov	r0, r1
-    8070:	e3431f20 	movt	r1, #16160	; 0x3f20
-    8074:	e3a02096 	mov	r2, #150	; 0x96
-    8078:	e5830030 	str	r0, [r3, #48]	; 0x30
-    807c:	e1a0c002 	mov	ip, r2
-    8080:	e5810094 	str	r0, [r1, #148]	; 0x94
+0000800c <CORE3_READY>:
+    800c:	00000000 	.word	0x00000000
 
-00008084 <__delay_53>:
-    8084:	e25cc001 	subs	ip, ip, #1
-    8088:	1afffffd 	bne	8084 <__delay_53>
-    808c:	e3a0c903 	mov	ip, #49152	; 0xc000
-    8090:	e581c098 	str	ip, [r1, #152]	; 0x98
+00008010 <_start>:
+    8010:	ee105fb0 	mrc	15, 0, r5, cr0, cr0, {5}
+    8014:	e2155003 	ands	r5, r5, #3
+    8018:	e3550000 	cmp	r5, #0
+    801c:	0a000001 	beq	8028 <.exit_park>
+    8020:	e3a0d902 	mov	sp, #32768	; 0x8000
+    8024:	ea00001e 	b	80a4 <.park>
 
-00008094 <__delay_70>:
-    8094:	e2522001 	subs	r2, r2, #1
-    8098:	1afffffd 	bne	8094 <__delay_70>
-    809c:	e5810098 	str	r0, [r1, #152]	; 0x98
-    80a0:	e30027ff 	movw	r2, #2047	; 0x7ff
-    80a4:	e5832044 	str	r2, [r3, #68]	; 0x44
-    80a8:	e3a02001 	mov	r2, #1
-    80ac:	e5832024 	str	r2, [r3, #36]	; 0x24
-    80b0:	e3a02028 	mov	r2, #40	; 0x28
-    80b4:	e5832028 	str	r2, [r3, #40]	; 0x28
-    80b8:	e3a02070 	mov	r2, #112	; 0x70
-    80bc:	e583202c 	str	r2, [r3, #44]	; 0x2c
-    80c0:	e30027f2 	movw	r2, #2034	; 0x7f2
-    80c4:	e5832038 	str	r2, [r3, #56]	; 0x38
-    80c8:	e3002301 	movw	r2, #769	; 0x301
-    80cc:	e5832030 	str	r2, [r3, #48]	; 0x30
-    80d0:	e12fff1e 	bx	lr
+00008028 <.exit_park>:
+    8028:	e3a0d902 	mov	sp, #32768	; 0x8000
+    802c:	e59f011c 	ldr	r0, [pc, #284]	; 8150 <halt+0x8>
+    8030:	e3a01000 	mov	r1, #0
+    8034:	e8b003fc 	ldm	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
+    8038:	e8a103fc 	stmia	r1!, {r2, r3, r4, r5, r6, r7, r8, r9}
+    803c:	e8b003fc 	ldm	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
+    8040:	e8a103fc 	stmia	r1!, {r2, r3, r4, r5, r6, r7, r8, r9}
+    8044:	e59f0108 	ldr	r0, [pc, #264]	; 8154 <halt+0xc>
+    8048:	e59f1108 	ldr	r1, [pc, #264]	; 8158 <halt+0x10>
+    804c:	e3a02000 	mov	r2, #0
 
-000080d4 <uart_putc>:
-    80d4:	e3a02a01 	mov	r2, #4096	; 0x1000
-    80d8:	e3432f20 	movt	r2, #16160	; 0x3f20
-    80dc:	e5923018 	ldr	r3, [r2, #24]
-    80e0:	e3130020 	tst	r3, #32
-    80e4:	1afffffc 	bne	80dc <uart_putc+0x8>
-    80e8:	e5820000 	str	r0, [r2]
-    80ec:	e12fff1e 	bx	lr
+00008050 <.clear_bss>:
+    8050:	e1500001 	cmp	r0, r1
+    8054:	aa000002 	bge	8064 <.clear_bss_exit>
+    8058:	e5802000 	str	r2, [r0]
+    805c:	e2800004 	add	r0, r0, #4
+    8060:	eafffffa 	b	8050 <.clear_bss>
 
-000080f0 <uart_getc>:
-    80f0:	e3a02a01 	mov	r2, #4096	; 0x1000
-    80f4:	e3432f20 	movt	r2, #16160	; 0x3f20
-    80f8:	e5923018 	ldr	r3, [r2, #24]
-    80fc:	e3130010 	tst	r3, #16
-    8100:	1afffffc 	bne	80f8 <uart_getc+0x8>
-    8104:	e5920000 	ldr	r0, [r2]
-    8108:	e6ef0070 	uxtb	r0, r0
-    810c:	e12fff1e 	bx	lr
+00008064 <.clear_bss_exit>:
+    8064:	e59f00f0 	ldr	r0, [pc, #240]	; 815c <halt+0x14>
+    8068:	e5901000 	ldr	r1, [r0]
+    806c:	e3a03001 	mov	r3, #1
+    8070:	e1510003 	cmp	r1, r3
+    8074:	1afffffa 	bne	8064 <.clear_bss_exit>
 
-00008110 <uart_puts>:
-    8110:	e92d4010 	push	{r4, lr}
-    8114:	e1a04000 	mov	r4, r0
-    8118:	e5d00000 	ldrb	r0, [r0]
-    811c:	e3500000 	cmp	r0, #0
-    8120:	08bd8010 	popeq	{r4, pc}
-    8124:	ebffffea 	bl	80d4 <uart_putc>
-    8128:	e5f40001 	ldrb	r0, [r4, #1]!
-    812c:	e3500000 	cmp	r0, #0
-    8130:	1afffffb 	bne	8124 <uart_puts+0x14>
-    8134:	e8bd8010 	pop	{r4, pc}
+00008078 <.wait_core2_ack>:
+    8078:	e59f00e0 	ldr	r0, [pc, #224]	; 8160 <halt+0x18>
+    807c:	e5901000 	ldr	r1, [r0]
+    8080:	e3a03001 	mov	r3, #1
+    8084:	e1510003 	cmp	r1, r3
+    8088:	1afffffa 	bne	8078 <.wait_core2_ack>
 
-00008138 <kernel_main>:
-    8138:	e92d4010 	push	{r4, lr}
-    813c:	ebffffc7 	bl	8060 <uart_init>
-    8140:	e59f0010 	ldr	r0, [pc, #16]	; 8158 <kernel_main+0x20>
-    8144:	e08f0000 	add	r0, pc, r0
-    8148:	ebfffff0 	bl	8110 <uart_puts>
-    814c:	ebffffe7 	bl	80f0 <uart_getc>
-    8150:	ebffffdf 	bl	80d4 <uart_putc>
-    8154:	eafffffc 	b	814c <kernel_main+0x14>
-    8158:	00000eb4 	.word	0x00000eb4
+0000808c <.wait_core3_ack>:
+    808c:	e59f00d0 	ldr	r0, [pc, #208]	; 8164 <halt+0x1c>
+    8090:	e5901000 	ldr	r1, [r0]
+    8094:	e3a03001 	mov	r3, #1
+    8098:	e1510003 	cmp	r1, r3
+    809c:	1afffffa 	bne	808c <.wait_core3_ack>
+    80a0:	eb00006a 	bl	8250 <kmain>
+
+000080a4 <.park>:
+    80a4:	ee105fb0 	mrc	15, 0, r5, cr0, cr0, {5}
+    80a8:	e2155003 	ands	r5, r5, #3
+    80ac:	e3550001 	cmp	r5, #1
+    80b0:	0a000003 	beq	80c4 <.core1_ack>
+    80b4:	e3550002 	cmp	r5, #2
+    80b8:	0a000004 	beq	80d0 <.core2_ack>
+    80bc:	e3550003 	cmp	r5, #3
+    80c0:	0a000005 	beq	80dc <.core3_ack>
+
+000080c4 <.core1_ack>:
+    80c4:	e59f0090 	ldr	r0, [pc, #144]	; 815c <halt+0x14>
+    80c8:	e3a01001 	mov	r1, #1
+    80cc:	e5801000 	str	r1, [r0]
+
+000080d0 <.core2_ack>:
+    80d0:	e59f0088 	ldr	r0, [pc, #136]	; 8160 <halt+0x18>
+    80d4:	e3a01001 	mov	r1, #1
+    80d8:	e5801000 	str	r1, [r0]
+
+000080dc <.core3_ack>:
+    80dc:	e59f0080 	ldr	r0, [pc, #128]	; 8164 <halt+0x1c>
+    80e0:	e3a01001 	mov	r1, #1
+    80e4:	e5801000 	str	r1, [r0]
+
+000080e8 <_iv_table>:
+    80e8:	e59ff018 	ldr	pc, [pc, #24]	; 8108 <reset_vector>
+    80ec:	e59ff018 	ldr	pc, [pc, #24]	; 810c <undefined_vector>
+    80f0:	e59ff018 	ldr	pc, [pc, #24]	; 8110 <swi_vector>
+    80f4:	e59ff018 	ldr	pc, [pc, #24]	; 8114 <prefetch_vector>
+    80f8:	e59ff018 	ldr	pc, [pc, #24]	; 8118 <data_vector>
+    80fc:	e59ff018 	ldr	pc, [pc, #24]	; 811c <unused_vector>
+    8100:	e59ff018 	ldr	pc, [pc, #24]	; 8120 <irq_vector>
+    8104:	e59ff018 	ldr	pc, [pc, #24]	; 8124 <fiq_vector>
+
+00008108 <reset_vector>:
+    8108:	00008128 	.word	0x00008128
+
+0000810c <undefined_vector>:
+    810c:	0000812c 	.word	0x0000812c
+
+00008110 <swi_vector>:
+    8110:	00008130 	.word	0x00008130
+
+00008114 <prefetch_vector>:
+    8114:	00008134 	.word	0x00008134
+
+00008118 <data_vector>:
+    8118:	00008144 	.word	0x00008144
+
+0000811c <unused_vector>:
+    811c:	0000813c 	.word	0x0000813c
+
+00008120 <irq_vector>:
+    8120:	00008138 	.word	0x00008138
+
+00008124 <fiq_vector>:
+    8124:	00008140 	.word	0x00008140
+
+00008128 <reset_asm_handler>:
+    8128:	eafffffe 	b	8128 <reset_asm_handler>
+
+0000812c <undefined_asm_handler>:
+    812c:	eafffffe 	b	812c <undefined_asm_handler>
+
+00008130 <swi_asm_handler>:
+    8130:	eafffffe 	b	8130 <swi_asm_handler>
+
+00008134 <prefetch_asm_handler>:
+    8134:	eaffffff 	b	8138 <irq_asm_handler>
+
+00008138 <irq_asm_handler>:
+    8138:	eafffffe 	b	8138 <irq_asm_handler>
+
+0000813c <unused_asm_handler>:
+    813c:	eafffffe 	b	813c <unused_asm_handler>
+
+00008140 <fiq_asm_handler>:
+    8140:	eafffffe 	b	8140 <fiq_asm_handler>
+
+00008144 <data_asm_handler>:
+    8144:	eafffffe 	b	8144 <data_asm_handler>
+
+00008148 <halt>:
+    8148:	e320f002 	wfe
+    814c:	eafffffd 	b	8148 <halt>
+    8150:	000080e8 	.word	0x000080e8
+    8154:	00009000 	.word	0x00009000
+    8158:	00009000 	.word	0x00009000
+    815c:	00008004 	.word	0x00008004
+    8160:	00008008 	.word	0x00008008
+    8164:	0000800c 	.word	0x0000800c
+
+00008168 <uart_init>:
+    8168:	e3a03a01 	mov	r3, #4096	; 0x1000
+    816c:	e3a01000 	mov	r1, #0
+    8170:	e3433f20 	movt	r3, #16160	; 0x3f20
+    8174:	e3431f20 	movt	r1, #16160	; 0x3f20
+    8178:	e3a00000 	mov	r0, #0
+    817c:	e3a02096 	mov	r2, #150	; 0x96
+    8180:	e5830030 	str	r0, [r3, #48]	; 0x30
+    8184:	e1a0c002 	mov	ip, r2
+    8188:	e5810094 	str	r0, [r1, #148]	; 0x94
+
+0000818c <__delay_61>:
+    818c:	e25cc001 	subs	ip, ip, #1
+    8190:	1afffffd 	bne	818c <__delay_61>
+    8194:	e3a0c903 	mov	ip, #49152	; 0xc000
+    8198:	e581c098 	str	ip, [r1, #152]	; 0x98
+
+0000819c <__delay_78>:
+    819c:	e2522001 	subs	r2, r2, #1
+    81a0:	1afffffd 	bne	819c <__delay_78>
+    81a4:	e5810098 	str	r0, [r1, #152]	; 0x98
+    81a8:	e30027ff 	movw	r2, #2047	; 0x7ff
+    81ac:	e5832044 	str	r2, [r3, #68]	; 0x44
+    81b0:	e3a02001 	mov	r2, #1
+    81b4:	e5832024 	str	r2, [r3, #36]	; 0x24
+    81b8:	e3a02028 	mov	r2, #40	; 0x28
+    81bc:	e5832028 	str	r2, [r3, #40]	; 0x28
+    81c0:	e3a02070 	mov	r2, #112	; 0x70
+    81c4:	e583202c 	str	r2, [r3, #44]	; 0x2c
+    81c8:	e30027f2 	movw	r2, #2034	; 0x7f2
+    81cc:	e5832038 	str	r2, [r3, #56]	; 0x38
+    81d0:	e3002301 	movw	r2, #769	; 0x301
+    81d4:	e5832030 	str	r2, [r3, #48]	; 0x30
+    81d8:	e12fff1e 	bx	lr
+
+000081dc <uart_putc>:
+    81dc:	e3a01a01 	mov	r1, #4096	; 0x1000
+    81e0:	e3431f20 	movt	r1, #16160	; 0x3f20
+    81e4:	e5912018 	ldr	r2, [r1, #24]
+    81e8:	e3a03a01 	mov	r3, #4096	; 0x1000
+    81ec:	e3433f20 	movt	r3, #16160	; 0x3f20
+    81f0:	e3120020 	tst	r2, #32
+    81f4:	1afffffa 	bne	81e4 <uart_putc+0x8>
+    81f8:	e5830000 	str	r0, [r3]
+    81fc:	e12fff1e 	bx	lr
+
+00008200 <uart_getc>:
+    8200:	e3a01a01 	mov	r1, #4096	; 0x1000
+    8204:	e3431f20 	movt	r1, #16160	; 0x3f20
+    8208:	e5912018 	ldr	r2, [r1, #24]
+    820c:	e3a03a01 	mov	r3, #4096	; 0x1000
+    8210:	e3433f20 	movt	r3, #16160	; 0x3f20
+    8214:	e3120010 	tst	r2, #16
+    8218:	1afffffa 	bne	8208 <uart_getc+0x8>
+    821c:	e5930000 	ldr	r0, [r3]
+    8220:	e6ef0070 	uxtb	r0, r0
+    8224:	e12fff1e 	bx	lr
+
+00008228 <uart_puts>:
+    8228:	e92d4010 	push	{r4, lr}
+    822c:	e1a04000 	mov	r4, r0
+    8230:	e5d00000 	ldrb	r0, [r0]
+    8234:	e3500000 	cmp	r0, #0
+    8238:	08bd8010 	popeq	{r4, pc}
+    823c:	ebffffe6 	bl	81dc <uart_putc>
+    8240:	e5f40001 	ldrb	r0, [r4, #1]!
+    8244:	e3500000 	cmp	r0, #0
+    8248:	1afffffb 	bne	823c <uart_puts+0x14>
+    824c:	e8bd8010 	pop	{r4, pc}
+
+00008250 <kmain>:
+    8250:	e92d4010 	push	{r4, lr}
+    8254:	ebffffc3 	bl	8168 <uart_init>
+    8258:	e59f0010 	ldr	r0, [pc, #16]	; 8270 <kmain+0x20>
+    825c:	e08f0000 	add	r0, pc, r0
+    8260:	ebfffff0 	bl	8228 <uart_puts>
+    8264:	ebffffe5 	bl	8200 <uart_getc>
+    8268:	ebffffdb 	bl	81dc <uart_putc>
+    826c:	eafffffc 	b	8264 <kmain+0x14>
+    8270:	00000010 	.word	0x00000010
+
+Disassembly of section .stack:
+
+00008288 <__stack_core0_start__>:
+	...
+
+00008488 <__svc_stack_core0__>:
+	...
+
+00008688 <__sys_stack_core0__>:
+	...

@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "kernel.h"
+
 // Memory-Mapped I/O output
 static inline void mmio_write(uint32_t reg, uint32_t data)
 {
@@ -121,15 +123,11 @@ void uart_puts(const char* str)
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
-void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
+void kmain()
 {
-	// Declare as unused
-	(void) r0;
-	(void) r1;
-	(void) atags;
 
 	uart_init();
-	uart_puts("abcd\r\n");
+	uart_puts("all cores ready\n");
 
 	while (1)
 		uart_putc(uart_getc());

@@ -2,46 +2,56 @@
 Memory Configuration
 
 Name             Origin             Length             Attributes
+RAM              0x0000000000008000 0x000000001fff8000
+PERIPHERALS      0x0000000020000000 0x0000000000ffffff
 *default*        0x0000000000000000 0xffffffffffffffff
 
 Linker script and memory map
 
 LOAD build/init.o
 LOAD build/kmain.o
+                0x0000000000000200                KERNEL_STACK_SIZE = 0x200
+                0x0000000000000200                SYS_STACK_SIZE = 0x200
+                0x0000000000000200                IRQ_STACK_SIZE = 0x200
                 0x0000000000008000                . = 0x8000
                 0x0000000000008000                __start = .
                 0x0000000000008000                __text_start = .
 
-.text           0x0000000000008000      0x15c
+.text           0x0000000000008000      0x274
+ build/init.o(.text*)
+ .text          0x0000000000008000       0x10 build/init.o
+                0x0000000000008000                CORE0_READY
+                0x0000000000008004                CORE1_READY
+                0x0000000000008008                CORE2_READY
+                0x000000000000800c                CORE3_READY
+ .text.boot     0x0000000000008010      0x158 build/init.o
+                0x0000000000008010                _start
  *(.text.boot)
- .text.boot     0x0000000000008000       0x60 build/init.o
-                0x0000000000008000                _start
  *(.text)
- .text          0x0000000000008060        0x0 build/init.o
- .text          0x0000000000008060       0xfc build/kmain.o
-                0x0000000000008060                uart_init
-                0x00000000000080d4                uart_putc
-                0x00000000000080f0                uart_getc
-                0x0000000000008110                uart_puts
-                0x0000000000008138                kernel_main
+ .text          0x0000000000008168      0x10c build/kmain.o
+                0x0000000000008168                uart_init
+                0x00000000000081dc                uart_putc
+                0x0000000000008200                uart_getc
+                0x0000000000008228                uart_puts
+                0x0000000000008250                kmain
 
-.glue_7         0x000000000000815c        0x0
- .glue_7        0x000000000000815c        0x0 linker stubs
+.glue_7         0x0000000000008274        0x0
+ .glue_7        0x0000000000008274        0x0 linker stubs
 
-.glue_7t        0x000000000000815c        0x0
- .glue_7t       0x000000000000815c        0x0 linker stubs
+.glue_7t        0x0000000000008274        0x0
+ .glue_7t       0x0000000000008274        0x0 linker stubs
 
-.vfp11_veneer   0x000000000000815c        0x0
- .vfp11_veneer  0x000000000000815c        0x0 linker stubs
+.vfp11_veneer   0x0000000000008274        0x0
+ .vfp11_veneer  0x0000000000008274        0x0 linker stubs
 
-.v4_bx          0x000000000000815c        0x0
- .v4_bx         0x000000000000815c        0x0 linker stubs
+.v4_bx          0x0000000000008274        0x0
+ .v4_bx         0x0000000000008274        0x0 linker stubs
 
-.iplt           0x000000000000815c        0x0
- .iplt          0x000000000000815c        0x0 build/init.o
+.iplt           0x0000000000008274        0x0
+ .iplt          0x0000000000008274        0x0 build/init.o
 
-.rel.dyn        0x000000000000815c        0x0
- .rel.iplt      0x000000000000815c        0x0 build/init.o
+.rel.dyn        0x0000000000008274        0x0
+ .rel.iplt      0x0000000000008274        0x0 build/init.o
                 0x0000000000009000                . = ALIGN (0x1000)
                 0x0000000000009000                __text_end = .
                 0x0000000000009000                __rodata_start = .
@@ -49,33 +59,62 @@ LOAD build/kmain.o
 .rodata
  *(.rodata)
 
-.rodata.str1.4  0x0000000000009000        0x8
+.rodata.str1.4  0x0000000000008274       0x14
  .rodata.str1.4
-                0x0000000000009000        0x8 build/kmain.o
-                                          0x7 (size before relaxing)
-                0x000000000000a000                . = ALIGN (0x1000)
-                0x000000000000a000                __rodata_end = .
-                0x000000000000a000                __data_start = .
+                0x0000000000008274       0x14 build/kmain.o
+                                         0x11 (size before relaxing)
+                0x0000000000009000                . = ALIGN (0x1000)
+                0x0000000000009000                __rodata_end = .
+                0x0000000000009000                __data_start = .
 
-.data           0x000000000000a000        0x0
+.data           0x0000000000008288        0x0 load address 0x0000000000009000
  *(.data)
- .data          0x000000000000a000        0x0 build/init.o
- .data          0x000000000000a000        0x0 build/kmain.o
+ .data          0x0000000000008288        0x0 build/init.o
+ .data          0x0000000000008288        0x0 build/kmain.o
 
-.igot.plt       0x000000000000a000        0x0
- .igot.plt      0x000000000000a000        0x0 build/init.o
-                0x000000000000a000                . = ALIGN (0x1000)
-                0x000000000000a000                __data_end = .
-                0x000000000000a000                __bss_start = .
+.igot.plt       0x0000000000008288        0x0 load address 0x0000000000009d78
+ .igot.plt      0x0000000000008288        0x0 build/init.o
+                0x0000000000009000                . = ALIGN (0x1000)
+                0x0000000000009000                __data_end = .
+                0x0000000000009000                __bss_start = .
 
-.bss            0x000000000000a000        0x0
-                0x000000000000a000                bss = .
+.bss            0x0000000000008288        0x0 load address 0x0000000000009d78
+                0x0000000000008288                bss = .
  *(.bss)
- .bss           0x000000000000a000        0x0 build/init.o
- .bss           0x000000000000a000        0x0 build/kmain.o
-                0x000000000000a000                . = ALIGN (0x1000)
-                0x000000000000a000                __bss_end = .
-                0x000000000000a000                __end = .
+ .bss           0x0000000000008288        0x0 build/init.o
+ .bss           0x0000000000008288        0x0 build/kmain.o
+                0x0000000000009000                . = ALIGN (0x1000)
+                0x0000000000009000                __bss_end = .
+                0x0000000000009000                __end = .
+
+.stack          0x0000000000008288      0x600 load address 0x0000000000009d78
+                0x0000000000008288                __stack_core0_start__ = .
+                0x0000000000008488                . = (. + KERNEL_STACK_SIZE)
+ *fill*         0x0000000000008288      0x200 
+                0x0000000000008488                . = ALIGN (0x4)
+                0x0000000000008488                __svc_stack_core0__ = .
+                0x0000000000008688                . = (. + SYS_STACK_SIZE)
+ *fill*         0x0000000000008488      0x200 
+                0x0000000000008688                . = ALIGN (0x4)
+                0x0000000000008688                __sys_stack_core0__ = .
+                0x0000000000008888                . = (. + IRQ_STACK_SIZE)
+ *fill*         0x0000000000008688      0x200 
+                0x0000000000008888                . = ALIGN (0x4)
+                0x0000000000008888                __irq_stack_core0__ = .
+                0x0000000000008888                __stacks_core0_end__ = .
+                0x0000000000009000                . = ALIGN (0x1000)
+                0x0000000000009000                __kernel_heap_start__ = .
+                0x0000000000ffffff                . = 0xffffff
+                0x0000000000ffffff                __kernel_heap_end__ = .
+                0x0000000001000000                . = ALIGN (0x1000)
+                0x0000000001000000                __after_kernel_heap__ = .
+                0x0000000020000000                . = 0x20000000
+
+.devices        0x0000000020000000   0xffffff
+                0x0000000020000000                __devices_start__ = .
+                0x0000000020ffffff                . = (. + 0xffffff)
+ *fill*         0x0000000020000000   0xffffff 
+                0x0000000020ffffff                __devices_end__ = .
 OUTPUT(build/kernel.elf elf32-littlearm)
 
 .ARM.attributes
@@ -85,21 +124,21 @@ OUTPUT(build/kernel.elf elf32-littlearm)
  .ARM.attributes
                 0x0000000000000029       0x3b build/kmain.o
 
-.comment        0x0000000000000000       0x7e
- .comment       0x0000000000000000       0x7e build/kmain.o
-                                         0x7f (size before relaxing)
+.comment        0x0000000000000000       0x11
+ .comment       0x0000000000000000       0x11 build/kmain.o
+                                         0x12 (size before relaxing)
 
-.debug_line     0x0000000000000000      0x168
- .debug_line    0x0000000000000000       0x55 build/init.o
- .debug_line    0x0000000000000055      0x113 build/kmain.o
+.debug_line     0x0000000000000000      0x17e
+ .debug_line    0x0000000000000000       0x91 build/init.o
+ .debug_line    0x0000000000000091       0xed build/kmain.o
 
-.debug_info     0x0000000000000000      0x50e
+.debug_info     0x0000000000000000      0x4e2
  .debug_info    0x0000000000000000       0x26 build/init.o
- .debug_info    0x0000000000000026      0x4e8 build/kmain.o
+ .debug_info    0x0000000000000026      0x4bc build/kmain.o
 
-.debug_abbrev   0x0000000000000000      0x198
+.debug_abbrev   0x0000000000000000      0x18e
  .debug_abbrev  0x0000000000000000       0x14 build/init.o
- .debug_abbrev  0x0000000000000014      0x184 build/kmain.o
+ .debug_abbrev  0x0000000000000014      0x17a build/kmain.o
 
 .debug_aranges  0x0000000000000000       0x40
  .debug_aranges
@@ -107,16 +146,16 @@ OUTPUT(build/kernel.elf elf32-littlearm)
  .debug_aranges
                 0x0000000000000020       0x20 build/kmain.o
 
-.debug_str      0x0000000000000000      0x289
- .debug_str     0x0000000000000000       0x48 build/init.o
- .debug_str     0x0000000000000048      0x241 build/kmain.o
-                                        0x2b0 (size before relaxing)
+.debug_str      0x0000000000000000      0x23c
+ .debug_str     0x0000000000000000       0x42 build/init.o
+ .debug_str     0x0000000000000042      0x1fa build/kmain.o
+                                        0x264 (size before relaxing)
 
-.debug_loc      0x0000000000000000      0x337
- .debug_loc     0x0000000000000000      0x337 build/kmain.o
+.debug_loc      0x0000000000000000      0x2d4
+ .debug_loc     0x0000000000000000      0x2d4 build/kmain.o
 
-.debug_ranges   0x0000000000000000       0x58
- .debug_ranges  0x0000000000000000       0x58 build/kmain.o
+.debug_ranges   0x0000000000000000       0x68
+ .debug_ranges  0x0000000000000000       0x68 build/kmain.o
 
 .debug_frame    0x0000000000000000       0x70
  .debug_frame   0x0000000000000000       0x70 build/kmain.o
