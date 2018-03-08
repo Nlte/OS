@@ -5,8 +5,8 @@ MEMORY {
     PERIPHERALS : ORIGIN = 0x20000000, LENGTH = 0x20FFFFFF - 0x20000000
 }
 
-KERNEL_STACK_SIZE = 512;
-SYS_STACK_SIZE = 512;
+SVC_STACK_SIZE = 512;
+FIQ_STACK_SIZE = 512;
 IRQ_STACK_SIZE = 512;
 
 SECTIONS
@@ -55,19 +55,76 @@ SECTIONS
     .stack : {
 
        __stack_core0_start__ = .;
-	   . += KERNEL_STACK_SIZE ;
+	   . += SVC_STACK_SIZE ;
 	   . = ALIGN(4);
 	   __svc_stack_core0__ = .;
 
-	   . += SYS_STACK_SIZE ;
-	   . = ALIGN(4);
-	   __sys_stack_core0__ = .;
-
-       . += IRQ_STACK_SIZE ;
+	   . += IRQ_STACK_SIZE ;
 	   . = ALIGN(4);
 	   __irq_stack_core0__ = .;
 
-   	   __stacks_core0_end__ = .;
+       . += FIQ_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __fiq_stack_core0__ = .;
+
+   	 __stacks_core0_end__ = .;
+
+    } > RAM
+
+		.stack_core1 : {
+
+       __stack_core1_start__ = .;
+	   . += SVC_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __svc_stack_core1__ = .;
+
+	   . += IRQ_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __irq_stack_core1__ = .;
+
+       . += FIQ_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __fiq_stack_core1__ = .;
+
+   	 __stacks_core1_end__ = .;
+
+    } > RAM
+
+		.stack_core2 : {
+
+       __stack_core2_start__ = .;
+	   . += SVC_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __svc_stack_core2__ = .;
+
+	   . += IRQ_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __irq_stack_core2__ = .;
+
+       . += FIQ_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __fiq_stack_core2__ = .;
+
+   	 __stacks_core2_end__ = .;
+
+    } > RAM
+
+		.stack_core2 : {
+
+       __stack_core3_start__ = .;
+	   . += SVC_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __svc_stack_core3__ = .;
+
+	   . += IRQ_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __irq_stack_core3__ = .;
+
+       . += FIQ_STACK_SIZE ;
+	   . = ALIGN(4);
+	   __fiq_stack_core3__ = .;
+
+   	 __stacks_core3_end__ = .;
 
     } > RAM
 

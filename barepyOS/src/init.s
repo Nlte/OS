@@ -27,6 +27,56 @@ CORE3_READY: .4byte 0;
 ;@ Entry point for the kernel
 _start:
 
+  ;@ Setup stacks for each core
+  ;@ core0
+  ldr r2, = __svc_stack_core0__
+  ldr r3, = __fiq_stack_core0__
+  ldr r4, = __irq_stack_core0__
+  mrc p15, 0, r5, c0, c0, 5
+  ands r5, r5, #0x3
+  cmp r5, #0
+  beq set_stacks
+  ;@ core1
+  ldr r2, = __svc_stack_core1__
+  ldr r3, = __fiq_stack_core1__
+  ldr r4, = __fiq_stack_core1__
+  mrc p15, 0, r5, c0, c0, 5
+  ands r5, r5, #0x3
+  cmp r5, #1
+  beq set_stacks
+  ;@ core2
+  ldr r2, = __svc_stack_core2__
+  ldr r3, = __fiq_stack_core2__
+  ldr r4, = __fiq_stack_core2__
+  mrc p15, 0, r5, c0, c0, 5
+  ands r5, r5, #0x3
+  cmp r5, #2
+  beq set_stacks
+  ;@ core3
+  ldr r2, = __svc_stack_core3__
+  ldr r3, = __fiq_stack_core3__
+  ldr r4, = __fiq_stack_core3__
+  mrc p15, 0, r5, c0, c0, 5
+  ands r5, r5, #0x3
+  cmp r5, #3
+  beq set_stacks
+
+set_stacks:
+  ;@ SVC mode
+  mov sp, r2 ;@ kernel stack
+  ;@ FIQ mode
+  mov r0, #CPU_FIQMODE_VALUE
+  msr cpsr_c, r0
+  mov sp, r3
+  ;@ IRQ mode
+  mov r0, #CPU_IRQMODE_VALUE
+  msr cpsr_c, r0
+  mov sp, r4
+  ;@ all stacks ready go back to SVC mode
+  mov r0, #CPU_SVCMODE_VALUE
+  msr cpsr_c, r0
+
+
   mrc p15, 0, r5, c0, c0, 5
   ands r5, r5, #0x3
   cmp r5, #0
@@ -62,7 +112,6 @@ _start:
     b .clear_bss
 
 .clear_bss_exit:
-
 
 
   ;@ wait until all cores ready
