@@ -149,19 +149,25 @@ set_stacks:
   beq .core3_ack
 
 .core1_ack:
-  ldr r0, =CORE1_READY
-  mov r1, #1
-  str r1, [r0]
+  ldr r1, =CORE1_READY
+  ldr r0, [r1]
+  mov r0, #1
+  str r0, [r1]
+  b halt
 
 .core2_ack:
-  ldr r0, =CORE2_READY
-  mov r1, #1
-  str r1, [r0]
+  ldr r1, =CORE2_READY
+  ldr r0, [r1]
+  mov r0, #1
+  str r0, [r1]
+  b halt
 
 .core3_ack:
-  ldr r0, =CORE3_READY
-  mov r1, #1
-  str r1, [r0]
+  ldr r1, =CORE3_READY
+  ldr r0, [r1]
+  mov r0, #1
+  str r0, [r1]
+  b halt
 
 _iv_table:
       ldr pc,reset_vector

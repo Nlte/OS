@@ -15,4 +15,7 @@ extern uint32_t __kernel_heap_start__;
 extern uint32_t __kernel_heap_end__;
 
 
+void kernel_init();
+
+
 #endif
