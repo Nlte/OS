@@ -3,7 +3,7 @@
 
 #include "kernel.h"
 #include "hw.h"
-
+#include "syscall.h"
 
 void uart_putc(unsigned char c)
 {
@@ -33,11 +33,9 @@ void kmain()
 	log_str("all cores ready");
 	log_cr();
 
-	__asm("ldr r1, =CORE1_READY");
-  __asm("ldr r0, [r1]");
-  __asm("mov r0, #1");
-  __asm("str r0, [r1]");
+	uint64_t t = sys_gettime();
+	log_int((int) t);
+	log_cr();
 
-	while (1)
-		uart_putc(uart_getc());
+
 }

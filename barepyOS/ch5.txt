@@ -3,3 +3,16 @@ Thread = path of execution (within a process). Threads share the same address sp
 Usually, 1 process is started with one thread.
 Dispatcher ==> allow one process to acces the CPU.
 Processes execute concurrently (share the hardware ressource CPU)
+
+
+join_smp:
+  mrc p15, 0, r0, c1, c0, 1 // read ACTLR
+  orr r0, r0, #0x040 // set bit 6 (SMP) to 1
+  mcr p15, 0, r0, c1, c0, 1 // write ACTLR
+  bx lr
+
+disjoin_smp:
+  mrc p15, 0, r0, c1, c0, 1 // read ACTLR
+  bic r0, #0x040 // clear bit 6 (SMP) to 1
+  mcr p15, 0, r0, c1, c0, 1 // write ACTLR
+  bx lr

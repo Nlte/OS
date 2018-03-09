@@ -153,21 +153,32 @@ set_stacks:
   ldr r0, [r1]
   mov r0, #1
   str r0, [r1]
-  b halt
+  CLREX
+  b disjoin_smp
 
 .core2_ack:
   ldr r1, =CORE2_READY
   ldr r0, [r1]
   mov r0, #1
   str r0, [r1]
-  b halt
+  b disjoin_smp
 
 .core3_ack:
   ldr r1, =CORE3_READY
   ldr r0, [r1]
   mov r0, #1
   str r0, [r1]
-  b halt
+  b disjoin_smp
+
+disjoin_smp:
+  clrex
+  mrc p15, 0, r0, c1, c0, 1 // read ACTLR
+  bic r0, #0x040 // clear bit 6 (SMP) to 1
+  mcr p15, 0, r0, c1, c0, 1 // write ACTLR
+  isb // ensure all the cp15 changes are commited
+  dsb // ensure all cache, tlb, tlb, branch prediction
+  wfi // set processor in idle low power state
+
 
 _iv_table:
       ldr pc,reset_vector
@@ -196,7 +207,7 @@ undefined_asm_handler:
 	b undefined_asm_handler
 
 swi_asm_handler:
-	b swi_asm_handler
+	b swi_handler
 
 prefetch_asm_handler:
 	b irq_asm_handler
