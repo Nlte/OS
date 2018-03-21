@@ -33,9 +33,9 @@ void kmain()
 	log_str("all cores ready");
 	log_cr();
 
-	uint64_t t = sys_gettime();
-	log_int((int) t);
-	log_cr();
+	sys_nop();
 
+	log_str("returned");
+	log_cr();
 
 }

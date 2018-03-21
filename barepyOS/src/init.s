@@ -178,6 +178,7 @@ disjoin_smp:
   isb // ensure all the cp15 changes are commited
   dsb // ensure all cache, tlb, tlb, branch prediction
   wfi // set processor in idle low power state
+  b halt // infinite loop
 
 
 _iv_table:

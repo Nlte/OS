@@ -16,3 +16,8 @@ disjoin_smp:
   bic r0, #0x040 // clear bit 6 (SMP) to 1
   mcr p15, 0, r0, c1, c0, 1 // write ACTLR
   bx lr
+
+
+https://stackoverflow.com/questions/22474840/how-to-use-the-swi-in-arm-cortex-a9-for-enabling-the-irq-interrupt
+http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0471c/Cjaebbeh.html
+https://developer.arm.com/embedded

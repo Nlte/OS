@@ -9,7 +9,7 @@ kernel_for_sdcard: kernel_for_qemu build/kernel.img
 remake: clean all
 
 # options à passer au compilateur C
-CFLAGS=-Wall -Werror -nostdlib -nostartfiles -ffreestanding -std=gnu99 -g -ggdb -fomit-frame-pointer -nostartfiles -O2 -fdiagnostics-show-option -fpic
+CFLAGS=-Wall -Werror -nostdlib -nostartfiles -ffreestanding -std=gnu99 -g -ggdb -fomit-frame-pointer -nostartfiles -O0 -fdiagnostics-show-option -fpic
 
 # options à passer à la fois au compilateur C et à l'assembleur
 COMMON_FLAGS=-mcpu=cortex-a7
