@@ -4,6 +4,7 @@
 #include "kernel.h"
 #include "hw.h"
 #include "syscall.h"
+#include "util.h"
 
 void uart_putc(unsigned char c)
 {
@@ -32,6 +33,8 @@ void kmain()
 	kernel_init();
 	log_str("all cores ready");
 	log_cr();
+
+  SWITCH_TO_USER_MODE();
 
 	sys_nop();
 
