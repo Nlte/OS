@@ -1,9 +1,9 @@
 #ifndef __HEADER_UART
 #define __HEADER_UART
 
-//
+#include "hw.h"
 // Registres UART
-#define UART_BASE 0x3F201000
+#define UART_BASE (GPIO_BASE + 0x1000)
 #define UART_DR		(UART_BASE + 0x00)	// Data register
 #define UART_RSRECR	(UART_BASE + 0x04)
 #define UART_FR		(UART_BASE + 0x18)	// Flag register

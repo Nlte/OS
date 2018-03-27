@@ -21,12 +21,17 @@
 #define log_cr()
 #endif
 
+/*
+3F000000
+  200000
+*/
 /*************  Memory mapping ***********/
 #define HEAP_START 0x50000
-#define BCM2708_PERI_BASE 0x20000000
-#define GPIO_BASE         (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
-#define PWM_BASE          (BCM2708_PERI_BASE + 0x20C000) /* PWM controller */
-#define CLOCK_BASE        (BCM2708_PERI_BASE + 0x101000) /* Address */
+#define BCM2835_PERI_BASE 0x20000000
+#define BCM2836_PERI_BASE 0x3F000000
+#define GPIO_BASE         (BCM2836_PERI_BASE + 0x200000) /* GPIO controller */
+#define PWM_BASE          (BCM2836_PERI_BASE + 0x20C000) /* PWM controller */
+#define CLOCK_BASE        (BCM2836_PERI_BASE + 0x101000) /* Address */
 
 /*********** Processor modes *************/
 #define IRQ_MODE 0x12
@@ -34,13 +39,13 @@
 #define SYS_MODE 0x1F
 
 /************** Clock module *************/
-#define CS      0x20003000
-#define CLO     0x20003004
-#define CHI     0x20003008
-#define C0      0x2000300C
-#define C1      0x20003010
-#define C2      0x20003014
-#define C3      0x20003018
+#define CS      0x30003000
+#define CLO     0x30003004
+#define CHI     0x30003008
+#define C0      0x3000300C
+#define C1      0x30003010
+#define C2      0x30003014
+#define C3      0x30003018
 
 #define SYS_TIMER_CLOCK 250000000 /* We use the system timer, running at 250MHz */
 #define SYS_TIMER_CLOCK_div_1000 250000

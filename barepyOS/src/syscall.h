@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // SWI macros __________________________________________________________
-#define SWI(syscall_id) __asm("mov r0, %0\n" "SWI #0" : : "r"(syscall_id))
+#define SWI(syscall_id) __asm("mov r0, %0\n" "SVC #0" : : "r"(syscall_id))
 #define SAVE_CONTEXT() __asm("stmfd sp!, {r0-r12, lr}")
 #define RESTORE_CONTEXT() __asm("ldmfd sp!, {r0-r12, pc}^")
 

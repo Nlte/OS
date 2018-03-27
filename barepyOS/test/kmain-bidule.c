@@ -3,7 +3,7 @@
 
 void bidule()
 {
-    
+  return;
 }
 
 void kmain()
@@ -12,4 +12,3 @@ void kmain()
     bidule();
     return;
 }
-

@@ -36,8 +36,10 @@ void kmain()
 
   SWITCH_TO_USER_MODE();
 
-	sys_nop();
+	uint64_t ktime = sys_gettime();
 
+  log_int((int) ktime);
+  log_cr();
 	log_str("returned");
 	log_cr();
 

@@ -1,7 +1,7 @@
 # -*- mode: gdb-script -*-
 
 define dump_top_of_stack
-       print/x *((unsigned int*) $sp)@16
+       print/x *((unsigned int*) $sp)@14
 end
 
 define reset

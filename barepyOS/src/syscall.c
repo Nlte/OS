@@ -51,14 +51,14 @@ void do_sys_settime(uint32_t* context) {
 
 // Syscall : get time __________________________________________________________
 uint64_t sys_gettime() {
-  // Call the get time routine directly
   SWI(SID_GETTIME);
   // Retrieve time from r0, r1
-  uint32_t lsb;
-  uint32_t msb;
-  __asm("mov %0, r1" : "=r"(msb) : : "r0", "r1");
-  __asm("mov %0, r2" : "=r"(lsb) : : "r1", "r0");
-  uint64_t date_ms = (uint64_t) msb << 32 | lsb;
+  //uint32_t msb, lsb;
+  //__asm("mov %0, r1" : "=r"(msb));
+  //__asm("mov %0, r2" : "=r"(lsb));
+  register uint32_t msb asm("r1");
+  register uint32_t lsb asm("r2");
+  uint64_t date_ms = (((uint64_t) msb) << 32 | lsb);
 
   return date_ms;
 }
