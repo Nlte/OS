@@ -1,0 +1,3 @@
+increase RAM
+cf. sys_gettime locals (store on stack) outside of RAM segment
++ reconf linked for heap/PERIPHERALS addr

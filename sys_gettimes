@@ -1,0 +1,117 @@
+Cortex asm mov
+
+00009498 <sys_gettime>:
+    9498:	e92d0030 	push	{r4, r5}
+    949c:	e24dd010 	sub	sp, sp, #16
+    94a0:	e3a03004 	mov	r3, #4
+    94a4:	e1a00003 	mov	r0, r3
+    94a8:	ef000000 	svc	0x00000000
+    94ac:	e1a03001 	mov	r3, r1
+    94b0:	e58d300c 	str	r3, [sp, #12]
+    94b4:	e1a03002 	mov	r3, r2
+    94b8:	e58d3008 	str	r3, [sp, #8]
+    94bc:	e59d300c 	ldr	r3, [sp, #12]
+    94c0:	e1a00003 	mov	r0, r3
+    94c4:	e3a01000 	mov	r1, #0
+    94c8:	e3a04000 	mov	r4, #0
+    94cc:	e3a05000 	mov	r5, #0
+    94d0:	e1a05000 	mov	r5, r0
+    94d4:	e3a04000 	mov	r4, #0
+    94d8:	e59d1008 	ldr	r1, [sp, #8]
+    94dc:	e1a00001 	mov	r0, r1
+    94e0:	e3a01000 	mov	r1, #0
+    94e4:	e1842000 	orr	r2, r4, r0
+    94e8:	e1853001 	orr	r3, r5, r1
+    94ec:	e1cd20f0 	strd	r2, [sp]
+    94f0:	e1cd20d0 	ldrd	r2, [sp]
+    94f4:	e1a00002 	mov	r0, r2
+    94f8:	e1a01003 	mov	r1, r3
+    94fc:	e28dd010 	add	sp, sp, #16
+    9500:	e8bd0030 	pop	{r4, r5}
+    9504:	e12fff1e 	bx	lr
+
+Cortex a7 register instruction
+
+00009498 <sys_gettime>:
+    9498:	e92d0030 	push	{r4, r5}
+    949c:	e24dd008 	sub	sp, sp, #8
+    94a0:	e3a03004 	mov	r3, #4
+    94a4:	e1a00003 	mov	r0, r3
+    94a8:	ef000000 	svc	0x00000000
+    94ac:	e1a03001 	mov	r3, r1
+    94b0:	e1a04003 	mov	r4, r3
+    94b4:	e3a05000 	mov	r5, #0
+    94b8:	e3a00000 	mov	r0, #0
+    94bc:	e3a01000 	mov	r1, #0
+    94c0:	e1a01004 	mov	r1, r4
+    94c4:	e3a00000 	mov	r0, #0
+    94c8:	e1a03002 	mov	r3, r2
+    94cc:	e1a04003 	mov	r4, r3
+    94d0:	e3a05000 	mov	r5, #0
+    94d4:	e1842000 	orr	r2, r4, r0
+    94d8:	e1853001 	orr	r3, r5, r1
+    94dc:	e1cd20f0 	strd	r2, [sp]
+    94e0:	e1cd20d0 	ldrd	r2, [sp]
+    94e4:	e1a00002 	mov	r0, r2
+    94e8:	e1a01003 	mov	r1, r3
+    94ec:	e28dd008 	add	sp, sp, #8
+    94f0:	e8bd0030 	pop	{r4, r5}
+    94f4:	e12fff1e 	bx	lr
+
+Cortex a7 naked
+
+00009498 <sys_gettime>:
+    9498:	e3a03004 	mov	r3, #4
+    949c:	e1a00003 	mov	r0, r3
+    94a0:	ef000000 	svc	0x00000000
+    94a4:	e1a03001 	mov	r3, r1
+    94a8:	e1a05003 	mov	r5, r3
+    94ac:	e1a03002 	mov	r3, r2
+    94b0:	e1a04003 	mov	r4, r3
+    94b4:	e1a00005 	mov	r0, r5
+    94b8:	e3a01000 	mov	r1, #0
+    94bc:	e3a02000 	mov	r2, #0
+    94c0:	e3a03000 	mov	r3, #0
+    94c4:	e1a03000 	mov	r3, r0
+    94c8:	e3a02000 	mov	r2, #0
+    94cc:	e1a00004 	mov	r0, r4
+    94d0:	e3a01000 	mov	r1, #0
+    94d4:	e1824000 	orr	r4, r2, r0
+    94d8:	e1835001 	orr	r5, r3, r1
+    94dc:	e1a02004 	mov	r2, r4
+    94e0:	e1a03005 	mov	r3, r5
+    94e4:	e1a00002 	mov	r0, r2
+    94e8:	e1a01003 	mov	r1, r3
+
+
+ARM 1176 MOV
+
+00009248 <sys_gettime>:
+    9248:	e92d0030 	push	{r4, r5}
+    924c:	e24dd010 	sub	sp, sp, #16
+    9250:	e3a03004 	mov	r3, #4
+    9254:	e1a00003 	mov	r0, r3
+    9258:	ef000000 	svc	0x00000000
+    925c:	e1a03001 	mov	r3, r1
+    9260:	e58d300c 	str	r3, [sp, #12]
+    9264:	e1a03002 	mov	r3, r2
+    9268:	e58d3008 	str	r3, [sp, #8]
+    926c:	e59d300c 	ldr	r3, [sp, #12]
+    9270:	e1a00003 	mov	r0, r3
+    9274:	e3a01000 	mov	r1, #0
+    9278:	e3a04000 	mov	r4, #0
+    927c:	e3a05000 	mov	r5, #0
+    9280:	e1a05000 	mov	r5, r0
+    9284:	e3a04000 	mov	r4, #0
+    9288:	e59d1008 	ldr	r1, [sp, #8]
+    928c:	e1a00001 	mov	r0, r1
+    9290:	e3a01000 	mov	r1, #0
+    9294:	e1842000 	orr	r2, r4, r0
+    9298:	e1853001 	orr	r3, r5, r1
+    929c:	e1cd20f0 	strd	r2, [sp]
+    92a0:	e1cd20d0 	ldrd	r2, [sp]
+    92a4:	e1a00002 	mov	r0, r2
+    92a8:	e1a01003 	mov	r1, r3
+    92ac:	e28dd010 	add	sp, sp, #16
+    92b0:	e8bd0030 	pop	{r4, r5}
+    92b4:	e12fff1e 	bx	lr
