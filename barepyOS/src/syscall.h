@@ -30,5 +30,7 @@ void do_sys_settime(uint32_t* context);
 uint64_t sys_gettime();
 void do_sys_gettime(uint32_t* context);
 
+uint64_t sys_getclock();
+void do_sys_getclock(uint32_t* context);
 
 #endif

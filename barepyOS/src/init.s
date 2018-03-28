@@ -27,61 +27,67 @@ CORE3_READY: .4byte 0;
 ;@ Entry point for the kernel
 _start:
 
-  ;@ Setup stacks for each core
-  ;@ core0
-  ldr r2, = __svc_stack_core0__
-  ldr r3, = __fiq_stack_core0__
-  ldr r4, = __irq_stack_core0__
-  mrc p15, 0, r5, c0, c0, 5
-  ands r5, r5, #0x3
+  ldr r2, = __irq_stack_core0__
+  ldr r3, = __svc_stack_core0__
+  ldr r4, = __sys_stack_core0__
+  mrc p15, 0, r5, c0, c0, 5       ;@ read core affinity register
+  ands r5, r5, #0x3               ;@ core id bitmask
   cmp r5, #0
   beq set_stacks
-  ;@ core1
-  ldr r2, = __svc_stack_core1__
-  ldr r3, = __fiq_stack_core1__
-  ldr r4, = __fiq_stack_core1__
-  mrc p15, 0, r5, c0, c0, 5
-  ands r5, r5, #0x3
+  ldr r2, = __irq_stack_core1__
+  ldr r3, = __svc_stack_core1__
+  ldr r4, = __sys_stack_core1__
   cmp r5, #1
   beq set_stacks
-  ;@ core2
-  ldr r2, = __svc_stack_core2__
-  ldr r3, = __fiq_stack_core2__
-  ldr r4, = __fiq_stack_core2__
-  mrc p15, 0, r5, c0, c0, 5
-  ands r5, r5, #0x3
+  ldr r2, = __irq_stack_core2__
+  ldr r3, = __svc_stack_core2__
+  ldr r4, = __sys_stack_core2__
   cmp r5, #2
-  beq set_stacks
-  ;@ core3
-  ldr r2, = __svc_stack_core3__
-  ldr r3, = __fiq_stack_core3__
-  ldr r4, = __fiq_stack_core3__
-  mrc p15, 0, r5, c0, c0, 5
-  ands r5, r5, #0x3
+  ldr r2, = __irq_stack_core3__
+  ldr r3, = __svc_stack_core3__
+  ldr r4, = __sys_stack_core3__
   cmp r5, #3
-  beq set_stacks
 
 set_stacks:
-  ;@ SVC mode
-  mov sp, r2 ;@ kernel stack
-  ;@ FIQ mode
-  mov r0, #CPU_FIQMODE_VALUE
-  msr cpsr_c, r0
+  ;@ r3 address of the irq_stack
+  ;@ r4 address of the svc_stack
+  ;@ r5 address of the sys_stack
+  ;@ FIQ
+  ;@ (PSR_FIQ_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
+  mov r0,#0xD1
+  msr cpsr_c,r0
   mov sp, r3
-  ;@ IRQ mode
-  mov r0, #CPU_IRQMODE_VALUE
-  msr cpsr_c, r0
-  mov sp, r4
-  ;@ all stacks ready go back to SVC mode
-  mov r0, #CPU_SVCMODE_VALUE
-  msr cpsr_c, r0
+  ;@ ldr sp, =__irq_stack_end__
 
+  ;@ IRQ
+  ;@ (PSR_IRQ_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
+  mov r0,#0xD2
+  msr cpsr_c,r0
+  mov sp, r3
+  ;@ ldr sp, =__irq_stack_end__
+
+ ;@ (PSR_ABORT_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
+  mov r0,#0xD7
+  msr cpsr_c,r0
+  mov sp, r3
+  ;@ ldr sp, =__irq_stack_end__
+
+  ;@ (PSR_SVC_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
+  mov r0,#0xD3
+  msr cpsr_c,r0
+  mov sp, r4
+  ;@ ldr sp, =__svc_stack_end__
+
+  ;@ (PSR_SYSTEM_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
+  mov r0,#0xDF
+  msr cpsr_c,r0
+  mov sp, r5
+  ;@ ldr sp, =__sys_stack_end__
 
   mrc p15, 0, r5, c0, c0, 5
   ands r5, r5, #0x3
   cmp r5, #0
   beq .exit_park ;@ core0 exit park
-  mov sp, #0x8000
   b .park  ;@ other cores jump to the park routine
 
 .exit_park:
@@ -101,8 +107,8 @@ set_stacks:
 
   ;@ Clear out bss
 
-  ldr r0, =__bss_start
-	ldr r1, =__bss_end
+  ldr r0, =__bss_start__
+	ldr r1, =__bss_end__
 	mov r2, #0
 	.clear_bss:
     cmp r0, r1
@@ -112,7 +118,6 @@ set_stacks:
     b .clear_bss
 
 .clear_bss_exit:
-
 
   ;@ wait until all cores ready
   .wait_core1_ack:

@@ -9,7 +9,7 @@ set history filename ~/.gdb_history
 set history save
 
 b *kmain
-b *sys_gettime
+b *function_with_locals
 
 source utils.gdb
 
