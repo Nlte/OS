@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "hw.h"
 #include "uart.h"
+#include "sched.h"
 
 void kernel_init()
 {
@@ -22,4 +23,8 @@ void kernel_init()
   log_int((int) Get32(CORE3_READY));
   log_cr();
 
+}
+
+void __attribute__ ((naked)) reset_handler() {
+  __asm("bl kmain");
 }

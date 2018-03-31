@@ -5,18 +5,57 @@
 #include "hw.h"
 #include "syscall.h"
 #include "util.h"
+#include "sched.h"
 
-uint32_t function_with_locals() {
-	uint32_t l1 = 5;
-	uint32_t l2 = 3;
+pcb_s pcb1, pcb2;
 
-	return l1 - l2;
+pcb_s *p1, *p2;
+
+void user_process_1()
+{
+    int v1=5;
+    while(1)
+    {
+        v1++;
+        sys_yieldto(p2);
+    }
 }
 
-void kmain()
+void user_process_2()
 {
-	SWITCH_TO_SYSTEM_MODE();
+    int v2=-12;
+    while(1)
+    {
+        v2-=2;
+        sys_yieldto(p1);
+    }
+}
 
-	uint64_t clock_value = function_with_locals();
+void kmain() {
+
+	kernel_init();
+	log_str("Kernel initialised");
+	log_cr();
+
+  sched_init();
+
+	SWITCH_TO_USER_MODE();
+  log_str("in user mode");
+  log_cr();
+  p1 = &pcb1;
+  p2 = &pcb2;
+  p1->lr_user = (uint32_t) &user_process_1;
+  p2->lr_user = (uint32_t) &user_process_2;
+  p1->lr_svc = (uint32_t) &user_process_1;
+  p2->lr_svc = (uint32_t) &user_process_2;
+  __asm("mrs %0, cpsr" : "=r"(p1->cpsr_user));
+  //p1->cpsr_user &= 0b1111111111111111111111101111111; // enable interruptions
+  __asm("mrs %0, cpsr" : "=r"(p2->cpsr_user));
+  //p2->cpsr_user &= 0b1111111111111111111111101111111; // enable interruptions
+
+	sys_yieldto(p1);
+  //uint64_t ktime = sys_gettime();
+
+  PANIC();
 
 }

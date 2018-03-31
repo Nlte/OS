@@ -81,7 +81,7 @@ void __attribute__((naked)) swi_handler() {
   // Push r0-r12 + lr to the stack
   SAVE_CONTEXT();
 
-  // get the address of the saved registers on the stack
+  // get the address of r0 on the stack
   uint32_t* context;
   __asm("mov %0, sp" : "=r"(context));
 
@@ -94,8 +94,6 @@ void __attribute__((naked)) swi_handler() {
     case SID_SETTIME: do_sys_settime(context); break;
     case SID_GETTIME: do_sys_gettime(context); break;
     case SID_YIELDTO: do_sys_yieldto(context); break;
-    case SID_YIELD: do_sys_yield(context); break;
-    case SID_EXIT: do_sys_exit(context); break;
     default: PANIC(); break;
   }
 

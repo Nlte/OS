@@ -195,7 +195,7 @@ _iv_table:
       ldr pc,unused_vector
       ldr pc,irq_vector
       ldr pc,fiq_vector
-  reset_vector:      .word reset_asm_handler
+  reset_vector:      .word reset_handler
   undefined_vector:  .word undefined_asm_handler
   swi_vector:        .word swi_handler
   prefetch_vector:   .word prefetch_asm_handler
