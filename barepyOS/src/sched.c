@@ -27,11 +27,11 @@ void do_sys_yieldto(uint32_t* context) {
   // destination pcb in r1
   pcb_s* dest = (pcb_s*)context[1];
   // Save cpsr user
-  __asm("mrs %0, spsr" : "=r"(current_process->cpsr_user));
+  //__asm("mrs %0, spsr" : "=r"(current_process->cpsr_user));
   SWITCH_TO_SYSTEM_MODE();
   // Save lr_user and sp_user
   __asm("mov %0, lr" : "=r"(current_process->lr_user));
-  __asm("mov %0, sp" : "=r"(current_process->sp_user));
+  //__asm("mov %0, sp" : "=r"(current_process->sp_user));
   SWITCH_TO_SVC_MODE();
 
   // Backup data registers
@@ -48,10 +48,10 @@ void do_sys_yieldto(uint32_t* context) {
   SWITCH_TO_SYSTEM_MODE();
   // Restore lr user / sp_user
   __asm("mov lr, %0" : : "r"(current_process->lr_user));
-  __asm("mov sp, %0" : : "r"(current_process->sp_user));
+  //__asm("mov sp, %0" : : "r"(current_process->sp_user));
   SWITCH_TO_SVC_MODE();
   // Restore cpsr
-  __asm("msr spsr, %0" : : "r"(current_process->cpsr_user));
+  //__asm("msr spsr, %0" : : "r"(current_process->cpsr_user));
 }
 
 
