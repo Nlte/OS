@@ -1,0 +1,6 @@
+*.elf
+*.list
+*.md5
+*.o
+*.map
+*.img
