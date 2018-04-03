@@ -4,6 +4,7 @@
 #include "hw.h"
 #include "uart.h"
 #include "sched.h"
+#include "kheap.h"
 
 void kernel_init()
 {
@@ -22,6 +23,9 @@ void kernel_init()
   log_str("Core 3: ");
   log_int((int) Get32(CORE3_READY));
   log_cr();
+
+  sched_init();
+  kheap_init();
 
 }
 
