@@ -9,10 +9,8 @@ set history filename ~/.gdb_history
 set history save
 
 b *kmain
-b *do_sys_yieldto
-b *user_process_1
-b *user_process_2
-b sched.c:43
+b *sys_yield
+b *sys_yieldto
 
 source utils.gdb
 

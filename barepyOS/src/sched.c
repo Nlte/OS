@@ -14,8 +14,9 @@ pcb_s* current_process;
 
 void sched_init() {
   nprocess = 1;
-
   current_process = &kmain_process;
+  current_process->prev = current_process;
+  current_process->next = current_process;
 }
 
 // Syscall : yield to __________________________________________________________
@@ -55,15 +56,69 @@ void do_sys_yieldto(uint32_t* context) {
   __asm("msr spsr, %0" : : "r"(current_process->cpsr));
 }
 
+void context_to_pcb(uint32_t* context)
+{
+  // save context in current pcb
+  __asm("mrs %0, spsr" : "=r"(current_process->cpsr));
+  SWITCH_TO_SYSTEM_MODE();
+  __asm("mov %0, lr" : "=r"(current_process->lr_user));
+  __asm("mov %0, sp" : "=r"(current_process->sp));
+  SWITCH_TO_SVC_MODE();
+  for (int i = 0; i < N_REGISTERS; i++) {
+    current_process->r[i] = context[N_REGISTERS];
+  }
+  current_process->lr_svc = context[N_REGISTERS];
+}
+
+void pcb_to_context(uint32_t* context)
+{
+  // Update context for the next process
+  for (int i = 0; i < N_REGISTERS; i++) {
+    context[i] = current_process->r[i];
+  }
+  context[N_REGISTERS] = current_process->lr_svc;
+  SWITCH_TO_SYSTEM_MODE();
+  __asm("mov lr, %0" : : "r"(current_process->lr_user));
+  __asm("mov sp, %0" : : "r"(current_process->sp));
+  SWITCH_TO_SVC_MODE();
+  __asm("msr spsr, %0" : : "r"(current_process->cpsr));
+}
+
+void elect() {
+  current_process = current_process->next;
+}
+
+void sys_yield() {
+  SWI(SID_YIELD);
+}
+
+void do_sys_yield(uint32_t *context) {
+  context_to_pcb(context);
+  elect();
+  pcb_to_context(context);
+}
+
 
 pcb_s* create_process(func_t* entry) {
-
+  nprocess++;
   pcb_s* pcb = (pcb_s*) kAlloc(sizeof(pcb_s));
   pcb->mem_start = (uint32_t*) kAlloc(SIZE_STACK_PROCESS);
   pcb->sp = (uint32_t*)((uint32_t)pcb->mem_start + SIZE_STACK_PROCESS + 1);
   pcb->lr_user = (uint32_t) entry;
   pcb->lr_svc = (uint32_t) entry;
   pcb->cpsr = 0b10000;
+
+  pcb_s* last = current_process;
+  while (last->next != &kmain_process) {
+    last = last->next;
+  }
+  pcb->next = &kmain_process;
+  pcb->prev = last;
+  last->next = pcb;
+
+  log_str("New process pid: ");
+  log_int(nprocess);
+  log_cr();
 
   return pcb;
 }

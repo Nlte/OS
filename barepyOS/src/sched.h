@@ -37,6 +37,8 @@ struct pcb_s {
   uint32_t *mem_start;
   uint32_t *sp;
 
+  struct pcb_s *prev;
+  struct pcb_s *next;
 };
 typedef struct pcb_s pcb_s;
 
@@ -50,7 +52,10 @@ void do_sys_yieldto(uint32_t* context);
 // initialise scheduler
 void sched_init();
 
-// initialise nez process pcb
+// initialise new process pcb
 pcb_s* create_process(func_t* entry);
+
+void sys_yield();
+void do_sys_yield(uint32_t* context);
 
 #endif

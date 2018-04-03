@@ -48,8 +48,7 @@ void kmain() {
   p1 = create_process((func_t*) &user_process_1);
   p2 = create_process((func_t*) &user_process_2);
 
-	sys_yieldto(p1);
-  //uint64_t ktime = sys_gettime();
+	sys_yield();
 
   PANIC();
 
