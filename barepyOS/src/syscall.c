@@ -13,7 +13,6 @@ void sys_reboot() {
 void do_sys_reboot() {
   //Reboot QEMU
   __asm("bl 0x8000");
-
 }
 
 // Syscall : nop _______________________________________________________________
@@ -95,6 +94,7 @@ void __attribute__((naked)) swi_handler() {
     case SID_GETTIME: do_sys_gettime(context); break;
     case SID_YIELDTO: do_sys_yieldto(context); break;
     case SID_YIELD: do_sys_yield(context); break;
+    case SID_EXIT: do_sys_exit(context); break;
     default: PANIC(); break;
   }
 

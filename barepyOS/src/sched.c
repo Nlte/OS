@@ -17,6 +17,7 @@ void sched_init() {
   current_process = &kmain_process;
   current_process->prev = current_process;
   current_process->next = current_process;
+  current_process->state = PS_RUNNING;
 }
 
 // Syscall : yield to __________________________________________________________
@@ -85,7 +86,13 @@ void pcb_to_context(uint32_t* context)
 }
 
 void elect() {
+  if (current_process->state == PS_TERMINATED) {
+    current_process->prev->next = current_process->next;
+    current_process->next->prev = current_process->prev;
+    kFree((uint8_t*) current_process, sizeof(pcb_s));
+  }
   current_process = current_process->next;
+  current_process->state = PS_RUNNING;
 }
 
 void sys_yield() {
@@ -98,14 +105,33 @@ void do_sys_yield(uint32_t *context) {
   pcb_to_context(context);
 }
 
+int sys_exit(int status) {
+  __asm("mov r1, %0" : : "r"(status));
+  SWI(SID_EXIT);
+  return status;
+}
+
+void do_sys_exit(uint32_t *context) {
+  current_process->state = PS_TERMINATED;
+  current_process->exit_status = context[1];
+  elect();
+  pcb_to_context(context);
+}
+
+void start_current_process() {
+  current_process->entry();
+  sys_exit(0);
+}
+
 
 pcb_s* create_process(func_t* entry) {
   nprocess++;
   pcb_s* pcb = (pcb_s*) kAlloc(sizeof(pcb_s));
   pcb->mem_start = (uint32_t*) kAlloc(SIZE_STACK_PROCESS);
   pcb->sp = (uint32_t*)((uint32_t)pcb->mem_start + SIZE_STACK_PROCESS + 1);
-  pcb->lr_user = (uint32_t) entry;
-  pcb->lr_svc = (uint32_t) entry;
+  pcb->entry = entry;
+  pcb->lr_user = (uint32_t) &start_current_process;
+  pcb->lr_svc = (uint32_t) &start_current_process;
   pcb->cpsr = 0b10000;
 
   pcb_s* last = current_process;
@@ -115,6 +141,8 @@ pcb_s* create_process(func_t* entry) {
   pcb->next = &kmain_process;
   pcb->prev = last;
   last->next = pcb;
+  pcb->state = PS_IDLE;
+  pcb->pid = nprocess;
 
   log_str("New process pid: ");
   log_int(nprocess);

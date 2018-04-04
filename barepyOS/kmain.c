@@ -7,31 +7,16 @@
 #include "util.h"
 #include "sched.h"
 
-pcb_s *p1, *p2;
-
-void user_process_1()
-{
-    int v1=5;
-    while(1)
-    {
-        log_str("process 1 ");
-        log_int(v1);
+void user_process() {
+        int v=0;
+        while(v<5) {
+        v++;
+        log_str("Process ");
+        log_int(current_process->pid);
+        log_str(" v ");
+        log_int(v);
         log_cr();
-        v1++;
-        sys_yieldto(p2);
-    }
-}
-
-void user_process_2()
-{
-    int v2=-12;
-    while(1)
-    {
-        log_str("process 2");
-        log_int(v2);
-        log_cr();
-        v2-=2;
-        sys_yieldto(p1);
+        sys_yield();
     }
 }
 
@@ -45,10 +30,12 @@ void kmain() {
   log_str("in user mode");
   log_cr();
 
-  p1 = create_process((func_t*) &user_process_1);
-  p2 = create_process((func_t*) &user_process_2);
+  create_process((func_t*) &user_process);
+  create_process((func_t*) &user_process);
 
-	sys_yield();
+  while (1){
+    sys_yield();
+  }
 
   PANIC();
 
