@@ -12,6 +12,14 @@ Get32:
 	ldr r0, [r0]
 	mov pc, lr
 
+;@
+;@ Halt
+;@
+.globl halt
+halt:
+	wfi
+	bx lr
+
 
 ;@ Attent n cycles (environ)
 ;@ Prototype C : void delay(unsigned int c)
@@ -38,4 +46,3 @@ invalidate_cache:
    mcr	 p15, 0, r0, c1, c0, 0
    mcr   p15, 0, r0, c7, c7, 0
    mov   pc, lr
-

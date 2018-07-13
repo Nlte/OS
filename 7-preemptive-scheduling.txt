@@ -1,0 +1,21 @@
+bcm2836 documentation
+https://github.com/raspberrypi/documentation/blob/master/hardware/raspberrypi/bcm2836/QA7_rev3.4.pdf
+
+The round robin scheduler share the processor in a collaborative manner meaning
+the kernel is waiting on each process to yield to resume its execution. This
+can be used in certain OS with a specific design in mind.
+However in most OS the scheduling is preemptive that is to say the kernel take
+the control back without waiting on the other processes.
+
+Preemptive scheduling is important when it comes to interrupts. They can be
+created by external hardware (mouse, keyboard, sensors) or by software (SWI implemented
+in a previous chapter).
+One way to generate an IRQ interrupt is to use a timer that will send interrupt
+requests on expiration. The raspi2 has a system timer which is unfortunately
+not implemented in QEMU. Hence we will be using the ARM local timer. Each CPU of
+the cortex A7 has its own timer block: a block of 4 different timers
+(see generic timer architecture ARM Cortex A7 for more details).
+
+We will be using the primary core (core 0) and route the local timer interrupt to
+Core0 IRQ: write 000 to 0x40000024
+Setup the local timer: 0x40000034 (local timer control and status)

@@ -6,37 +6,31 @@
 #include "syscall.h"
 #include "util.h"
 #include "sched.h"
-
-void user_process() {
-        int v=0;
-        while(v<5) {
-        v++;
-        log_str("Process ");
-        log_int(current_process->pid);
-        log_str(" v ");
-        log_int(v);
-        log_cr();
-        sys_yield();
-    }
-}
+#include "timer.h"
 
 void kmain() {
 
-	kernel_init();
-	log_str("Kernel initialised");
-	log_cr();
+  kernel_init();
 
-	SWITCH_TO_USER_MODE();
-  log_str("in user mode");
-  log_cr();
+    uint32_t val;
 
-  create_process((func_t*) &user_process);
-  create_process((func_t*) &user_process);
+    log_str("CNTFRQ  : ");
+    cnt_freq = read_cnt_freq();
+    log_int(cnt_freq);
+    log_cr();
 
-  while (1){
-    sys_yield();
-  }
+    write_cntv_tval(cnt_freq);    // clear cntv interrupt and set next 1 sec timer.
+    log_str("CNTV_TVAL: ");
+    val = read_cntv_tval();
+    log_int(val);
+    log_cr();
 
-  PANIC();
+    route_cntv_to_irq();
+    ENABLE_CNTV();
+    ENABLE_IRQ();
+
+    while (1) {
+        halt();
+    }
 
 }

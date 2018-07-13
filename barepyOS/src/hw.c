@@ -70,7 +70,7 @@ timer_init()
     ENABLE_TIMER_IRQ();
 
     /* Enable interrupt *line* */
-    Set32(0x2000B210, 0x00000002);
+    Set32(0x3F00B210, 0x00000002);
 }
 
 /* **************************

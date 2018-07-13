@@ -153,4 +153,6 @@ pcb_s* create_process(func_t* entry) {
 
 
 void __attribute__ ((naked)) irq_handler() {
+  log_str("in irq handler");
+  log_cr();
 }

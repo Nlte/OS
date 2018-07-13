@@ -31,7 +31,9 @@
 #define BCM2836_PERI_BASE 0x3F000000
 #define GPIO_BASE         (BCM2836_PERI_BASE + 0x200000) /* GPIO controller */
 #define PWM_BASE          (BCM2836_PERI_BASE + 0x20C000) /* PWM controller */
-#define CLOCK_BASE        (BCM2836_PERI_BASE + 0x101000) /* Address */
+// #define CLOCK_BASE        (BCM2836_PERI_BASE + 0x003000) /* System timer */
+#define CLOCK_BASE        0x3F003000
+
 
 /*********** Processor modes *************/
 #define IRQ_MODE 0x12
@@ -39,13 +41,14 @@
 #define SYS_MODE 0x1F
 
 /************** Clock module *************/
-#define CS      0x30003000
-#define CLO     0x30003004
-#define CHI     0x30003008
-#define C0      0x3000300C
-#define C1      0x30003010
-#define C2      0x30003014
-#define C3      0x30003018
+
+#define CS      (CLOCK_BASE + 0X00)
+#define CLO     (CLOCK_BASE + 0X04)
+#define CHI     (CLOCK_BASE + 0X08)
+#define C0      (CLOCK_BASE + 0X0C)
+#define C1      (CLOCK_BASE + 0X10)
+#define C2      (CLOCK_BASE + 0X14)
+#define C3      (CLOCK_BASE + 0X18)
 
 #define SYS_TIMER_CLOCK 250000000 /* We use the system timer, running at 250MHz */
 #define SYS_TIMER_CLOCK_div_1000 250000
