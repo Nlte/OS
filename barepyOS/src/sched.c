@@ -153,6 +153,9 @@ pcb_s* create_process(func_t* entry) {
 
 
 void __attribute__ ((naked)) irq_handler() {
+  SAVE_CONTEXT();
   log_str("in irq handler");
   log_cr();
+  RESTORE_CONTEXT();
+  __asm("subs pc, lr, #4");
 }
