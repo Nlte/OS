@@ -9,6 +9,7 @@ set history filename ~/.gdb_history
 set history save
 
 b *kmain
+b *irq_handler
 
 source utils.gdb
 
