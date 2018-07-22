@@ -10,6 +10,7 @@ set history save
 
 b *kmain
 b *irq_handler
+b *c_halt
 
 source utils.gdb
 

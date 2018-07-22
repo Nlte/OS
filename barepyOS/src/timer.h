@@ -3,6 +3,8 @@
 
 #define CORE0_TIMER_IRQ_CNTL 0x40000040
 #define CORE0_IRQ_SOURCE 0x40000060
+#define DEFAULT_CNT_FREQ 62500000
+#define DEFAULT_CNTV_VAL DEFAULT_CNT_FREQ / 1
 
 
 #define ENABLE_CNTV() \
@@ -10,8 +12,6 @@
 #define DISABLE_CNTV() \
   __asm volatile("mcr p15, 0, %0, c14, c3, 1" :: "r"(0));
 
-
-static uint32_t cnt_freq = 0;
 
 void route_cntv_to_irq(void);
 
