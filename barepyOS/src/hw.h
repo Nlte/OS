@@ -119,7 +119,7 @@ void set_next_tick_default();
 
 void enable_timer_irq();
 void disable_timer_irq();
-void timer_init();
+void rpi_systimer_init();
 
 void led_on(void);
 void led_off(void);

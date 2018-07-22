@@ -61,7 +61,7 @@ set_next_tick_default()
 
 /* Use *system timer* peripheral -> compare module CM1 */
 void
-timer_init()
+rpi_systemtimer_init()
 {
     /* 10 ms seems good */
     set_next_tick_default();
