@@ -11,14 +11,14 @@
 #include <stdint.h>
 
 pcb_s kmain_process;
-pcb_s* current_process;
 
 void sched_init() {
-  nprocess = 1;
+  nprocess = 0;
   current_process = &kmain_process;
   current_process->prev = current_process;
   current_process->next = current_process;
   current_process->state = PS_RUNNING;
+  current_process->pid = nprocess;
 }
 
 // Syscall : yield to __________________________________________________________
@@ -58,7 +58,7 @@ void do_sys_yieldto(uint32_t* context) {
   __asm("msr spsr, %0" : : "r"(current_process->cpsr));
 }
 
-void context_to_pcb(uint32_t* context)
+void context_to_pcb_svc(uint32_t* context)
 {
   // save context in current pcb
   __asm("mrs %0, spsr" : "=r"(current_process->cpsr));
@@ -72,7 +72,7 @@ void context_to_pcb(uint32_t* context)
   current_process->lr_svc = context[N_REGISTERS];
 }
 
-void pcb_to_context(uint32_t* context)
+void pcb_to_context_svc(uint32_t* context)
 {
   // Update context for the next process
   for (int i = 0; i < N_REGISTERS; i++) {
@@ -101,9 +101,9 @@ void sys_yield() {
 }
 
 void do_sys_yield(uint32_t *context) {
-  context_to_pcb(context);
+  context_to_pcb_svc(context);
   elect();
-  pcb_to_context(context);
+  pcb_to_context_svc(context);
 }
 
 int sys_exit(int status) {
@@ -116,7 +116,7 @@ void do_sys_exit(uint32_t *context) {
   current_process->state = PS_TERMINATED;
   current_process->exit_status = context[1];
   elect();
-  pcb_to_context(context);
+  pcb_to_context_svc(context);
 }
 
 void start_current_process() {
@@ -152,6 +152,33 @@ pcb_s* create_process(func_t* entry) {
   return pcb;
 }
 
+void context_to_pcb_irq(uint32_t* context)
+{
+  // save context in current pcb
+  __asm("mrs %0, spsr" : "=r"(current_process->cpsr));
+  SWITCH_TO_SYSTEM_MODE();
+  __asm("mov %0, lr" : "=r"(current_process->lr_user));
+  __asm("mov %0, sp" : "=r"(current_process->sp));
+  SWITCH_TO_IRQ_MODE();
+  for (int i = 0; i < N_REGISTERS; i++) {
+    current_process->r[i] = context[N_REGISTERS];
+  }
+  current_process->lr_svc = context[N_REGISTERS];
+}
+
+void pcb_to_context_irq(uint32_t* context)
+{
+  // Update context for the next process
+  for (int i = 0; i < N_REGISTERS; i++) {
+    context[i] = current_process->r[i];
+  }
+  context[N_REGISTERS] = current_process->lr_svc;
+  SWITCH_TO_SYSTEM_MODE();
+  __asm("mov lr, %0" : : "r"(current_process->lr_user));
+  __asm("mov sp, %0" : : "r"(current_process->sp));
+  SWITCH_TO_IRQ_MODE();
+  __asm("msr spsr, %0" : : "r"(current_process->cpsr));
+}
 
 void __attribute__((naked)) irq_handler() {
   // decrease LR of 4 and push it on stack first otherwise it will
@@ -162,6 +189,11 @@ void __attribute__((naked)) irq_handler() {
   //--------------------------------------------
   log_str("in irq handler");
   log_cr();
+  uint32_t *context;
+  __asm("mov %0, sp" : "=r"(context));
+  context_to_pcb_irq(context);
+  elect();
+  pcb_to_context_irq(context);
   write_cntv_tval(DEFAULT_CNTV_VAL);
   // rearm timer
   RESTORE_CONTEXT();

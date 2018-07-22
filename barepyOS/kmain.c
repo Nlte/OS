@@ -1,6 +1,5 @@
 #include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 #include "kernel.h"
 #include "hw.h"
@@ -8,30 +7,44 @@
 #include "util.h"
 #include "sched.h"
 #include "timer.h"
+#include "syscall.h"
+#include "sched.h"
+#include "kernel.h"
+#include "kheap.h"
+
+#define NB_PROCESS 5
 
 
-void c_halt(){
-  return;
+void finish_line(){
+  while (1) {
+  }
 }
 
-void kmain() {
+int user_process()
+{
+    return 0;
+}
 
-  kernel_init();
+void kmain( void )
+{
+    uart_init();
+    sched_init();
+    kheap_init();
+    timer_init();
 
-    uint32_t val;
-
-    write_cntv_tval(DEFAULT_CNTV_VAL);    // clear cntv interrupt and set next 1 sec timer.
-    log_str("CNTV_TVAL: ");
-    val = read_cntv_tval();
-    log_int(val);
-    log_cr();
-
-    route_cntv_to_irq();
-    ENABLE_CNTV();
-    ENABLE_IRQ();
-
-    while (1) {
-        c_halt();
+    int i;
+    for(i=0;i<NB_PROCESS;i++)
+    {
+        create_process(&user_process);
     }
 
+    __asm("cps 0x10"); // switch CPU to USER mode
+    // ******************************************
+    sys_yield();
+    while(1) {
+
+    }
+    log_str("reached finish line");
+    log_cr();
+    finish_line();
 }
