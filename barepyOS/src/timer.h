@@ -27,5 +27,6 @@ void write_cntv_tval(uint32_t date);
 
 uint32_t read_cnt_freq(void);
 
+void timer_init(void);
 
 #endif

@@ -14,6 +14,7 @@ http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0464e/BABIDBIJ.ht
 #include <stdint.h>
 #include "timer.h"
 #include "asm_tools.h"
+#include "hw.h"
 
 void route_cntv_to_irq(void)
 {
@@ -60,4 +61,16 @@ uint64_t read_cntv_offset(void)
 	uint64_t offset;
   __asm volatile("mrrc p15, 4, %Q0, %R0, c14" : "=r" (offset));
 	return offset;
+}
+
+void timer_init() {
+  uint32_t val;
+  write_cntv_tval(DEFAULT_CNTV_VAL);
+  val = read_cntv_tval();
+  log_str("CNTV_TVAL: ");
+  log_int(val);
+  log_cr();
+  route_cntv_to_irq();
+  ENABLE_CNTV();
+  ENABLE_IRQ();
 }
