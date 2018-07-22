@@ -153,12 +153,16 @@ pcb_s* create_process(func_t* entry) {
 }
 
 
-void __attribute__ ((naked)) irq_handler() {
-  log_str("in irq handler");
-  log_cr();
+void __attribute__((naked)) irq_handler() {
+  // decrease LR of 4 and push it on stack first otherwise it will
+  // be lost
+  //--------------------------------------------
   __asm("sub lr, #4");
   SAVE_CONTEXT();
-  // rearm timer
+  //--------------------------------------------
+  log_str("in irq handler");
+  log_cr();
   write_cntv_tval(DEFAULT_CNTV_VAL);
+  // rearm timer
   RESTORE_CONTEXT();
 }
