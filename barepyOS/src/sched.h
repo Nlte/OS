@@ -14,7 +14,6 @@ number of data registers on the cortex a7
 */
 #define SIZE_STACK_PROCESS 10240
 
-
 int nprocess;
 
 // user process type

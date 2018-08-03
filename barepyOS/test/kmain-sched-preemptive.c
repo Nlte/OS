@@ -40,11 +40,7 @@ void kmain( void )
 
     __asm("cps 0x10"); // switch CPU to USER mode
     // ******************************************
-    sys_yield();
-    while(1) {
 
-    }
-    log_str("reached finish line");
-    log_cr();
+    sys_yield();
     finish_line();
 }

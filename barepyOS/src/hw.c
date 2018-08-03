@@ -61,7 +61,7 @@ set_next_tick_default()
 
 /* Use *system timer* peripheral -> compare module CM1 */
 void
-timer_init()
+rpi_systemtimer_init()
 {
     /* 10 ms seems good */
     set_next_tick_default();
@@ -70,7 +70,7 @@ timer_init()
     ENABLE_TIMER_IRQ();
 
     /* Enable interrupt *line* */
-    Set32(0x2000B210, 0x00000002);
+    Set32(0x3F00B210, 0x00000002);
 }
 
 /* **************************
