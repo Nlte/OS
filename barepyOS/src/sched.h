@@ -35,6 +35,7 @@ struct pcb_s {
   uint32_t *mem_start;
   uint32_t *sp;
   func_t *entry;
+  uint32_t *page_table;
 
   struct pcb_s *prev;
   struct pcb_s *next;

@@ -6,6 +6,7 @@
 #include "sched.h"
 #include "kheap.h"
 #include "timer.h"
+#include "vmem.h"
 
 void kernel_init()
 {
@@ -28,14 +29,22 @@ void kernel_init()
   log_cr();
 
   sched_init();
-  log_str("sched init");
+  log_str("scheduler initialised");
   log_cr();
   kheap_init();
-  log_str("kheap init");
+  log_str("kheap initialised");
   log_cr();
+  /*
+  Enable IRQ: timer + cps
   timer_init();
-  log_str("timer init");
+  log_str("irq enabled");
   log_cr();
+  */
+  #if VMEM
+    vmem_init();
+    log_str("vmem initialised");
+    log_cr();
+  #endif
 
 }
 

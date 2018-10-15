@@ -11,6 +11,7 @@
 #include "sched.h"
 #include "kernel.h"
 #include "kheap.h"
+#include "vmem.h"
 
 #define NB_PROCESS 5
 
@@ -27,24 +28,12 @@ int user_process()
 
 void kmain( void )
 {
-    uart_init();
-    sched_init();
-    kheap_init();
-    timer_init();
+  kernel_init();
+  log_str("Kernel initialised");
+  log_cr();
+  SWITCH_TO_USER_MODE();
+  while(1) {
 
-    int i;
-    for(i=0;i<NB_PROCESS;i++)
-    {
-        create_process(&user_process);
-    }
+  }
 
-    __asm("cps 0x10"); // switch CPU to USER mode
-    // ******************************************
-    sys_yield();
-    while(1) {
-
-    }
-    log_str("reached finish line");
-    log_cr();
-    finish_line();
 }
