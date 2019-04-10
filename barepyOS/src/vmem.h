@@ -4,6 +4,8 @@
 #include "sched.h"
 
 #define PAGE_SIZE 4096 // 4 KB (small page size) = 2^12 --> page offset on 12 bits
+#define FRAME_SIZE 4096
+#define FRAME_TABLE_SIZE (DEVICE_END+1)/FRAME_SIZE
 
 #define FIRST_LVL_TT_COUNT 4096 // n entries in table level 1
 #define FIRST_LVL_TT_SIZE 16384 // (n entries * 4)
@@ -15,6 +17,15 @@
 
 #define DEVICE_START 0x20000000 // start address for the peripherals (see linker script)
 #define DEVICE_END   0x20FFFFFF
+
+#define FRAME_FREE 0
+#define FRAME_OCCUPIED 1
+
+// TLB FAULTS 
+#define TRANSLATION_FAULT 	0b0111
+#define ACCESS_FAULT		0b0110
+#define PRIVILEGES_FAULT	0b1111
+
 
 // Page flags
 /*
@@ -34,10 +45,8 @@ NG S APX TEX AP C B    XN
 #define DEVICE_FLAGS 0b010000110111
 
 
-uint32_t init_kernel_translation_table();
+uint32_t init_translation_table();
 void vmem_init();
 uint32_t vmem_translate(uint32_t, pcb_s*, uint32_t);
-
-uint32_t KERNEL_PAGE_TABLE_BASE;
-
+uint8_t* vmem_alloc_for_userland(pcb_s*, unsigned int);
 #endif

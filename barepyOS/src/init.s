@@ -228,7 +228,7 @@ fiq_asm_handler:
 	b fiq_asm_handler
 
 data_asm_handler:
-	b data_asm_handler
+	b data_handler
 
 
 halt:

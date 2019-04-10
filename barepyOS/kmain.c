@@ -17,23 +17,23 @@
 
 
 void finish_line(){
-  while (1) {
-  }
+    while (1) {
+    }
 }
 
 int user_process()
 {
+    log_str("in user process");
+    log_cr();
     return 0;
 }
 
 void kmain( void )
 {
-  kernel_init();
-  log_str("Kernel initialised");
-  log_cr();
-  SWITCH_TO_USER_MODE();
-  while(1) {
-
-  }
-
+    kernel_init();
+    log_str("Kernel initialised");
+    log_cr();
+    SWITCH_TO_USER_MODE();
+    create_process(user_process); 
+    while (1) {}
 }

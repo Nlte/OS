@@ -5,10 +5,11 @@
 
 void kmain()
 {
-  kheap_init();
-  vmem_init();
-  uint32_t res = vmem_translate(0x123456, NULL, KERNEL_PAGE_TABLE_BASE);
-  // res = 1193046
-  log_int(res);
-  log_cr();
+    unsigned int table_base;
+    kheap_init();
+    table_base = (unsigned int) init_translation_table();
+    uint32_t res = vmem_translate(0x123456, NULL, table_base);
+    // res = 1193046
+    log_int(res);
+    log_cr();
 }

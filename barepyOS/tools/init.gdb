@@ -9,6 +9,7 @@ set history filename ~/.gdb_history
 set history save
 
 b *kmain
+b *start_mmu_C
 
 source utils.gdb
 

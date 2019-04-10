@@ -5,6 +5,7 @@
 *.md5
 *.o
 *.map
+*.swp
 
 build/
 
