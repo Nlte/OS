@@ -64,25 +64,31 @@ int find_next_free_frame(void)
 void start_mmu_C()
 {
     log_str("starting mmu");
-    __asm("mcr p15, 0, r1, c1, c0, 0");
-    __asm("orr r1, #0x1");
-    __asm("mcr p15, 0, r1, c1, c0, 0");
+    log_cr();
+    __asm("mov r1, #0");
+    __asm("mcr p15, 0, r0, c7, c7, 0"); //Invalidate cache (data and instructions) */
+    __asm("mcr p15, 0, r1, c8, c7, 0"); //Invalidate TLB entries
+    __asm("mcr p15, 0, r1, c7, c10, 0");
+
+    __asm("mvn r2,#0");
+    __asm("bic r2,#0xC");
+    __asm("mcr p15,0,r2,c3,c0,0 ;@ domain");
+
+    __asm("mcr p15,0,r0,c2,c0,0 ;@ tlb base");
+    __asm("mcr p15,0,r0,c2,c0,1 ;@ tlb base");
+
+    __asm("mrc p15,0,r2,c1,c0,0");
+    __asm("orr r2,r2,r1");
+    __asm("mcr p15,0,r2,c1,c0,0");
 }
 
-
-void start_mmu_C_v6()
+void invalidate_tlb_C()
 {
-    log_str("starting mmu");
-    register unsigned int control;
-    __asm("mcr p15, 0, %[zero], c1, c0, 0" : : [zero] "r"(0)); //Disable cache
-    __asm("mcr p15, 0, r0, c7, c7, 0"); //Invalidate cache (data and instructions) */
-    __asm("mcr p15, 0, r0, c8, c7, 0"); //Invalidate TLB entries
-    /* Enable ARMv6 MMU features (disable sub-page AP) */
-    control = (1<<23) | (1 << 15) | (1 << 4) | 1;
-    /* Invalidate the translation lookaside buffer (TLB) */
-    __asm volatile("mcr p15, 0, %[data], c8, c7, 0" : : [data] "r" (0));
-    /* Write control register */
-    __asm volatile("mcr p15, 0, %[control], c1, c0, 0" : : [control] "r" (control));
+    log_str("invalidating TLB");
+    log_cr();
+    __asm("mov r1, #0");
+    __asm("mcr p15, 0, r1, c8, c7, 0"); //Invalidate TLB entries
+    __asm("mcr p15, 0, r1, c7, c10, 0");
 }
 
 void configure_mmu_C(uint32_t addr_translation_base)
